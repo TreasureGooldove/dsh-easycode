@@ -1,0 +1,9 @@
+node_modules/
+# lib/ is committed so DSH can install the Git-hosted plugin without running
+# lifecycle build scripts that pnpm blocks by default.
+output/
+.playwright-cli/
+coverage/
+*.tgz
+*.log
+.DS_Store
