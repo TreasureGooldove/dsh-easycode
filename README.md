@@ -1,10 +1,26 @@
 # EasyCode
 
+<p align="center">
+  <a href="https://github.com/TreasureGooldove/dsh-easycode/actions/workflows/ci.yml"><img src="https://github.com/TreasureGooldove/dsh-easycode/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/version-0.1.0-4D6BFE?style=flat" alt="Version 0.1.0">
+    <a href="https://github.com/TreasureGooldove/dsh-easycode"><img src="https://img.shields.io/github/stars/TreasureGooldove/dsh-easycode?style=flat&amp;label=%E2%98%85&amp;color=08C" alt="GitHub stars"></a>
+  <img src="https://img.shields.io/badge/DeepSeek%20Harness-Web-4493F8?style=flat" alt="DeepSeek Harness Web plugin">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2EA44F?style=flat" alt="MIT License"></a>
+</p>
+
+
+
 把“我想做一个……”压缩成一张表单。
 
-EasyCode 是 DeepSeek Harness 的应用起步器。它不要求用户先研究脚手架命令，而是收集项目名称、需求和工程偏好，在本机准备好工作区，再让当前 Harness 会话里的 DeepSeek 接着完成开发。
+<p align="center">
+  <img src="docs/pics/1.jpg" alt="demo" width="100%">
+</p>
+
+
+EasyCode 是  [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)  的应用起步器。它不要求用户先研究脚手架命令，而是收集项目名称、需求和工程偏好，在本机准备好工作区，再让当前 Harness 会话里的 DeepSeek 接着完成开发。
 
 版本 `0.1.0` · Node.js 22+ · [MIT](LICENSE)
+
 
 ## 30 秒启动
 
