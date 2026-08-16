@@ -33,35 +33,19 @@ EasyCode 同时注册在 Harness 首页侧栏和设置页。首页入口会打�
 
 ## 安装
 
-需要 Node.js 22 或更高版本。以下命令使用 `npx` 临时运行 DSH CLI，无需预先全局安装 `dsh`。
-
-### 从本地检出安装
+需要 Node.js 22 或更高版本，并已安装 DeepSeek Harness CLI。
 
 ```bash
-npm install
-npm run check
-npm pack
-npx --yes @deepseek-ai/dsh plugin --profile web add ./dsh-easycode-0.1.0.tgz
-npx --yes @deepseek-ai/dsh web
+dsh plugin --profile web add github:TreasureGooldove/dsh-easycode
+```
+
+仓库已包含预构建运行文件，安装期间无需执行 `prepare`，也无需修改 pnpm 的 `allowBuilds`。
+
+```bash
+dsh --profile web
 ```
 
 打开 Harness Web UI 后，可从首页侧栏或设置页进入 `EasyCode`。
-
-### 从 GitHub 安装
-
-Git 安装会运行本仓库的 `prepare` 构建脚本。pnpm 10+ 默认要求用户明确允许安装期构建；请只对你审查并信任的提交授权。功能合并前可安装当前 GitHub Flow 分支：
-
-```bash
-npx --yes @deepseek-ai/dsh plugin --profile web add github:TreasureGooldove/dsh-easycode#feat/easycode-app-wizard
-```
-
-首次执行时，pnpm 可能拒绝未授权的 Git 构建，同时初始化 `web` profile。打开 `%USERPROFILE%\.dsh\profiles\web\pnpm-workspace.yaml`，把错误信息打印的精确包键加入 `allowBuilds`。随后重新执行安装命令，再运行：
-
-```bash
-npx --yes @deepseek-ai/dsh web
-```
-
-如果希望使用较短的 `dsh` 命令，也可以先运行 `npm install --global @deepseek-ai/dsh`。
 
 ## 输出位置
 
