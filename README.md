@@ -1,61 +1,138 @@
 # EasyCode
 
-EasyCode 是一个面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的点击式应用创建插件。它把常见的项目初始化决策收进一个 Web 向导：用户输入应用主题，选择少量约束，EasyCode 会创建本地工作区并自动把开发任务交给 DeepSeek。
+把“我想做一个……”压缩成一张表单。
 
-> 当前版本：`0.1.0`。DeepSeek Harness 仍处于开发者预览阶段，插件接口可能发生不兼容变更。
+EasyCode 是 DeepSeek Harness 的应用起步器。它不要求用户先研究脚手架命令，而是收集项目名称、需求和工程偏好，在本机准备好工作区，再让当前 Harness 会话里的 DeepSeek 接着完成开发。
 
-## 首版能力
+版本 `0.1.0` · Node.js 22+ · [MIT](LICENSE)
 
-### 简易模式
-
-- 只需填写项目名称和应用主题。
-- 技术栈和开发环境默认由 DeepSeek 根据产品目标自动决策。
-- 不初始化 Git，不启用 MCP。
-- 直接执行 Go 工作流，由 DeepSeek 生成并验证应用。
-
-### 专业模式
-
-- 技术栈可以交给 DeepSeek 自动决策，也可以从 35+ 个预设中选择：
-  - 前端与内容站点：Vanilla、React、Vue、Svelte、SolidJS、Angular、Astro、Qwik。
-  - 全栈 Web：Next.js、Nuxt、Remix、SvelteKit、TanStack Start。
-  - 后端与 API：Node.js、Express、Fastify、NestJS、Hono、Bun、Deno、FastAPI、Django、Go、Axum、Spring Boot、Ktor、.NET、Laravel、Rails。
-  - 桌面、移动端与扩展：Electron、Tauri、React Native、Expo、Flutter、浏览器扩展。
-  - 任意自定义技术栈。
-- 开发环境可以自动决策，也可指定本地、Docker、Podman、Dev Container、WSL、Nix、远程 SSH、GitHub Codespaces、Kubernetes 或任意自定义环境。
-- 可选择是否初始化以 `main` 为首分支的 Git 仓库。
-- Plan 工作流只完善规划与上下文；Go 工作流要求 DeepSeek 生成可运行代码并执行检查。
-- 可填写独立的设计目标。
-- 可选择是否写入手动确认过的 `.mcp.json`。
-
-“自动搜寻合适的 MCP”在界面中明确标记为 WIP。v0.1 不会为此联网、安装包或修改 MCP 列表。
-
-EasyCode 同时注册在 Harness 首页侧栏和设置页。首页入口会打开独立创建面板；生成后，插件使用 Harness 的工作区与会话服务打开项目，并自动发送开发任务。
-
-## 安装
-
-需要 Node.js 22 或更高版本，并已安装 DeepSeek Harness CLI。
+## 30 秒启动
 
 ```bash
 dsh plugin --profile web add github:TreasureGooldove/dsh-easycode
-```
-
-仓库已包含预构建运行文件，安装期间无需执行 `prepare`，也无需修改 pnpm 的 `allowBuilds`。
-
-```bash
 dsh --profile web
 ```
 
-打开 Harness Web UI 后，可从首页侧栏或设置页进入 `EasyCode`。
+打开 Harness Web 页面，从首页侧栏或「设置 → EasyCode」进入。
 
-## 输出位置
+GitHub 仓库已经带上编译后的插件文件，所以安装过程不会触发 `prepare`，也不用添加 pnpm `allowBuilds`。
 
-插件默认把项目写到：
+## 为什么需要它
+
+一个新项目真正开始写代码前，通常要先回答这些问题：
+
+- 用什么技术栈？
+- 在本机、容器还是远程环境开发？
+- 先规划，还是直接动手？
+- 要不要初始化 Git？
+- 有没有必须遵守的设计目标或 MCP 配置？
+
+EasyCode 把这些答案写成 DeepSeek 能持续读取的项目上下文。没有指定的部分由 DeepSeek 判断；已经指定的部分会成为开发约束。
+
+## 两档控制粒度
+
+### 简易模式：我只讲需求
+
+填写项目名称和一句话主题，然后创建。
+
+EasyCode 会采用以下默认值：
+
+- 技术栈：交给 DeepSeek。
+- 开发环境：交给 DeepSeek。
+- 工作流：Go。
+- Git：关闭。
+- MCP：关闭。
+
+适合验证想法、制作小工具或快速拿到第一版。
+
+### 专业模式：我来定规则
+
+专业模式把工程选择展开。每一项都可以明确指定，也可以继续留给 DeepSeek。
+
+<details>
+<summary><strong>可选技术栈</strong></summary>
+
+| 方向 | 选项 |
+| --- | --- |
+| Web 前端 | Vanilla、React、Vue、Svelte、SolidJS、Angular、Astro、Qwik |
+| Web 全栈 | Next.js、Nuxt、Remix、SvelteKit、TanStack Start |
+| JavaScript 服务端 | Node.js、Express、Fastify、NestJS、Hono、Bun、Deno |
+| Python | FastAPI、Django |
+| 其他服务端 | Go、Axum、Spring Boot、Ktor、.NET、Laravel、Rails |
+| 客户端与扩展 | Electron、Tauri、React Native、Expo、Flutter、浏览器扩展 |
+| 自定义 | 输入任意名称，或让 DeepSeek 选择 |
+
+React + Vite、Vue + Vite、Next.js、Node.js API 和 Vanilla + Vite 可以直接生成起始结构。其余选项会进入项目约束，由 DeepSeek 在会话中补全实现。
+
+</details>
+
+<details>
+<summary><strong>可选开发环境</strong></summary>
+
+本地开发、Docker、Podman、Dev Container、WSL、Nix、远程 SSH、GitHub Codespaces、Kubernetes、自定义环境，或者由 DeepSeek 判断。
+
+</details>
+
+<details>
+<summary><strong>工作流与附加选项</strong></summary>
+
+- **Plan**：把本轮重点放在需求、架构、步骤和验收条件上。
+- **Go**：要求 DeepSeek 继续产出可运行代码并执行检查。
+- **Git**：创建以 `main` 为首分支的本地仓库。
+- **设计目标**：单独记录体验、视觉、性能或工程质量要求。
+- **MCP**：写入用户已经确认的 MCP 配置。
+
+</details>
+
+自动寻找 MCP 目前只是界面中的 WIP 选项。`v0.1` 不会联网寻找 MCP，也不会替用户安装相关软件包。
+
+## 从表单到开发会话
+
+```text
+填写需求
+  → 校验全部选项
+  → 在临时位置生成项目
+  → 发布到目标目录
+  → 建立 Harness 工作区和会话
+  → 发送 Plan 或 Go 任务给 DeepSeek
+```
+
+模型、凭据和会话仍由 Harness 管理。EasyCode 只负责把项目准备好，并完成第一次任务交接。
+
+## 你会拿到什么
+
+项目默认位于：
 
 ```text
 $DSH_HOME/easycode-projects/<project-name>
 ```
 
-输出根目录由 bundle 的 `cordis.patch.yml` 提供。需要更改时，在 profile 或 `$DSH_HOME/cordis.patch.yml` 中完整覆盖 `easycode` 行：
+除了技术栈对应的起始文件，目录中还会出现：
+
+| 文件 | 给谁看 | 记录什么 |
+| --- | --- | --- |
+| `README.md` | 开发者 | 项目目标、方案和启动方法 |
+| `PLAN.md` | 开发者与 DeepSeek | 实施步骤、限制和完成标准 |
+| `EASYCODE.md` | DeepSeek | 本次创建时确定的稳定背景信息 |
+| `.easycode/config.json` | EasyCode | 表单选项的机器可读版本 |
+| `.mcp.json` | Harness / MCP 客户端 | 用户主动提供的 MCP 配置 |
+
+`.mcp.json` 只会在手动开启 MCP 时生成。
+
+## 它不会替你做什么
+
+- 不覆盖已经存在的同名目录。
+- 不在输出根目录之外写项目文件。
+- 不创建远程 Git 仓库，不提交，也不推送。
+- 不自动下载或安装 MCP。
+- 不把生成的项目上传到外部服务。
+- 不绕过 Harness 单独调用模型。
+
+项目会先写入临时目录，所有步骤完成后再一次性移动到最终位置。请求大小限制为 64 KB，路径、枚举、自定义文本和 MCP 数据都会在 Host 端重新检查。
+
+## 更换输出目录
+
+在 profile 或 `$DSH_HOME/cordis.patch.yml` 中覆盖 `easycode` 配置：
 
 ```yaml
 - id: easycode
@@ -64,50 +141,35 @@ $DSH_HOME/easycode-projects/<project-name>
     outputRoot: '/absolute/path/to/projects'
 ```
 
-注意：Harness patch 会替换整段 `config`，不是逐字段深度合并。
+这里需要提供完整的 `config`；Harness 不会把它与默认值逐字段合并。
 
-## 安全边界
-
-- 生成目录被限制在配置的 `outputRoot` 下。
-- 同名目录存在时返回冲突，不覆盖、不合并。
-- 文件先写入临时目录，成功后才原子发布。
-- 创建 API 只接受同源、JSON、带 EasyCode 请求头的 POST 请求。
-- 请求体最大 64 KB；项目名、枚举和 MCP 结构均在 Host 端再次校验。
-- Git 只执行参数化的 `git init --initial-branch=main`，不提交、不连接远程、不推送。
-- MCP 配置仅按用户明确输入写入；v0.1 不自动发现或安装 MCP。
-
-## 开发
+## 维护与开发
 
 ```bash
 npm install
-npm run typecheck
-npm test
-npm run build
+npm run check
 ```
 
-打包产物位于 `lib/`：
-
-- `lib/index.js`：Host 插件，注册安全的项目创建路由。
-- `lib/client.js`：Harness Web 客户端插件，注册首页入口、创建面板和设置页向导，并把任务交给 DeepSeek 会话。
-
-## 项目结构
+检查命令会运行 TypeScript 类型检查、20 项测试、生产构建和安装包内容校验。
 
 ```text
 src/
-├── client/          # Web UI 插件
-├── http.ts          # 同源 HTTP 边界
-├── scaffolder.ts    # 原子项目生成与 Git 初始化
-├── templates.ts     # Plan/Go 与各技术栈模板
-├── types.ts         # 共享请求/结果模型
-└── validation.ts    # Host 端输入校验
+├── client/          创建界面与 Harness 会话衔接
+├── http.ts          创建请求入口
+├── scaffolder.ts    文件落盘和 Git 初始化
+├── templates.ts     起始文件与上下文模板
+├── types.ts         Host / Web 共用类型
+└── validation.ts    输入规则
 ```
 
-## 路线图
+`lib/` 是 Git 安装需要的预构建产物。修改源码并执行构建后，需要同时提交对应的 `lib/` 变化。其他约定见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
-- v0.1：双模式向导、DeepSeek 自动决策、35+ 技术栈、丰富开发环境、Plan/Go、Git、手动 MCP、首页入口。
-- v0.2：更多生成后验证、可恢复的创建历史与可共享预设。
-- WIP：基于项目需求发现 MCP；在实现明确的来源、审查和授权流程之前不会自动安装。
+## 当前边界
 
-## 许可证
+- 已有：双模式、35+ 技术栈、丰富开发环境、Plan / Go、Git、手动 MCP、首页入口。
+- 下一步：生成后检查、创建记录、可复用预设。
+- 暂不提供：自动发现和安装 MCP。
 
-[MIT](./LICENSE)
+---
+
+EasyCode 由社区独立开发，与 DeepSeek 官方不存在隶属关系。
