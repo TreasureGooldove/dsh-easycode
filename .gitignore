@@ -1,0 +1,8 @@
+node_modules/
+lib/
+output/
+.playwright-cli/
+coverage/
+*.tgz
+*.log
+.DS_Store
