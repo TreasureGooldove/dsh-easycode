@@ -108,27 +108,27 @@ const STYLES = `
 .ec-root, .ec-root * { box-sizing: border-box; }
 
 body[data-ds-dark-theme] .ec-root {
-  --ec-canvas: #0f172a;
-  --ec-panel: #172033;
-  --ec-panel-raised: #1b263b;
-  --ec-panel-soft: #152e2b;
-  --ec-text: #f8fafc;
-  --ec-muted: #b2bfcc;
-  --ec-faint: #94a3b8;
-  --ec-border: #334155;
-  --ec-border-strong: #4b5d73;
+  --ec-canvas: #202321;
+  --ec-panel: #242725;
+  --ec-panel-raised: #282b29;
+  --ec-panel-soft: #243029;
+  --ec-text: #f5f7f6;
+  --ec-muted: #b8c1bd;
+  --ec-faint: #929d98;
+  --ec-border: #3b423f;
+  --ec-border-strong: #4b5651;
   --ec-accent: #22c55e;
   --ec-accent-strong: #4ade80;
-  --ec-accent-soft: #173b2b;
+  --ec-accent-soft: #20352a;
   --ec-accent-contrast: #052e16;
-  --ec-switch-off: #526174;
+  --ec-switch-off: #59625e;
   --ec-warn: #f5c56b;
-  --ec-warn-soft: #3a2c18;
+  --ec-warn-soft: #392f21;
   --ec-error: #ffaaa4;
-  --ec-error-soft: #3e2327;
+  --ec-error-soft: #3b2728;
   --ec-success: #79dda5;
   --ec-shadow-sm: 0 1px 2px rgba(0, 0, 0, .24);
-  --ec-shadow-md: 0 24px 64px rgba(0, 0, 0, .34);
+  --ec-shadow-md: 0 18px 48px rgba(0, 0, 0, .24);
   --ec-focus: rgba(74, 222, 128, .34);
 }
 
@@ -159,13 +159,7 @@ body[data-ds-dark-theme] .ec-root {
 .ec-version { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 7px; min-height: 30px; border: 1px solid var(--ec-border-strong); border-radius: 999px; background: var(--ec-panel); padding: 5px 11px; color: var(--ec-muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; box-shadow: var(--ec-shadow-sm); }
 .ec-version::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ec-accent); box-shadow: 0 0 0 3px var(--ec-accent-soft); }
 
-.ec-progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 4px 24px; padding-top: 18px; border-top: 1px solid var(--ec-border); list-style: none; counter-reset: ec-step; }
-.ec-progress li { display: flex; align-items: center; gap: 9px; min-width: 0; color: var(--ec-faint); font-size: 12px; }
-.ec-progress li::before { counter-increment: ec-step; content: counter(ec-step); display: grid; place-items: center; flex: 0 0 24px; width: 24px; height: 24px; border: 1px solid var(--ec-border); border-radius: 50%; background: var(--ec-panel); color: var(--ec-muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10px; }
-.ec-progress li:first-child { color: var(--ec-text); font-weight: 650; }
-.ec-progress li:first-child::before { border-color: var(--ec-accent); background: var(--ec-accent); color: var(--ec-accent-contrast); }
-
-.ec-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 0 0 26px; }
+.ec-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 24px 0 26px; }
 .ec-mode { position: relative; min-height: 176px; border: 1px solid var(--ec-border); border-radius: 16px; background: var(--ec-panel); color: inherit; padding: 18px; text-align: left; cursor: pointer; box-shadow: var(--ec-shadow-sm); transition: border-color 160ms ease, box-shadow 180ms ease, transform 120ms ease, background 180ms ease; touch-action: manipulation; }
 .ec-mode:hover { border-color: var(--ec-border-strong); box-shadow: 0 10px 28px rgba(16, 43, 35, .09); }
 .ec-mode:active { transform: scale(.99); }
@@ -297,11 +291,11 @@ body[data-ds-dark-theme] .ec-launcher-mark { color: #4ade80; border-color: rgba(
 @keyframes ec-modal-in { from { opacity: 0; transform: translateY(8px) scale(.992); } to { opacity: 1; transform: none; } }
 .ec-overlay-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 64px; padding: 10px 18px; border-bottom: 1px solid var(--dsw-alias-border-l2, #d9dcd8); }
 .ec-overlay-brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
-.ec-overlay-logo { display: grid; place-items: center; flex: 0 0 auto; width: 32px; height: 32px; border: 1px solid rgba(23, 122, 98, .4); border-radius: 9px; background: rgba(23, 122, 98, .12); color: #177a62; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10px; font-weight: 800; }
+.ec-overlay-logo { display: grid; place-items: center; flex: 0 0 auto; width: 32px; height: 32px; border: 1px solid rgba(23, 122, 98, .4); border-radius: 9px; background: rgba(23, 122, 98, .12); color: #177a62; }
 body[data-ds-dark-theme] .ec-overlay-logo { color: #4ade80; border-color: rgba(74, 222, 128, .42); background: rgba(74, 222, 128, .12); }
 .ec-overlay-brand-copy { min-width: 0; }
 .ec-overlay-brand strong { display: block; font-size: 14px; line-height: 1.3; }
-.ec-overlay-brand span { display: block; margin-top: 2px; color: var(--dsw-alias-label-tertiary, #69716e); font-size: 10px; }
+.ec-overlay-brand-copy > span { display: block; margin-top: 2px; color: var(--dsw-alias-label-tertiary, #69716e); font-size: 10px; }
 .ec-overlay-close { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border: 1px solid var(--dsw-alias-border-l2, #d9dcd8); border-radius: 11px; background: transparent; color: var(--dsw-alias-label-primary, #202725); padding: 0; cursor: pointer; transition: background 150ms ease, transform 120ms ease; }
 .ec-overlay-close:hover { background: var(--dsw-alias-interactive-bg-hover, rgba(0, 0, 0, .06)); }
 .ec-overlay-close:active { transform: scale(.95); }
@@ -314,8 +308,6 @@ body[data-ds-dark-theme] .ec-overlay-logo { color: #4ade80; border-color: rgba(7
   .ec-summary { position: static; }
 }
 @container (max-width: 620px) {
-  .ec-progress { grid-template-columns: 1fr; gap: 6px; }
-  .ec-progress li:not(:first-child) { display: none; }
   .ec-mode-grid, .ec-grid-2, .ec-auto-plan { grid-template-columns: 1fr; }
   .ec-mode { min-height: 164px; }
 }
@@ -453,7 +445,7 @@ function EasyCodeOverlay({ t, handoff }: LocaleSeat & { handoff: EasyCodeHandoff
   return <div className="ec-overlay" onMouseDown={event => { if (event.target === event.currentTarget) close() }}>
     <section ref={panelRef} className="ec-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="ec-overlay-title" aria-describedby="ec-overlay-hint">
       <header className="ec-overlay-head">
-        <div className="ec-overlay-brand"><span className="ec-overlay-logo" aria-hidden="true">EC</span><div className="ec-overlay-brand-copy"><strong id="ec-overlay-title">{t('dialogLabel')}</strong><span id="ec-overlay-hint">{t('dialogHint')}</span></div></div>
+        <div className="ec-overlay-brand"><span className="ec-overlay-logo" aria-hidden="true"><Icon name="sparkles" size={17} /></span><div className="ec-overlay-brand-copy"><strong id="ec-overlay-title">{t('dialogLabel')}</strong><span id="ec-overlay-hint">{t('dialogHint')}</span></div></div>
         <button ref={closeRef} className="ec-overlay-close" type="button" aria-label={t('close')} title={t('close')} onClick={close}><Icon name="close" size={19} /></button>
       </header>
       <div className="ec-overlay-body"><EasyCodeWizard handoff={handoff} /></div>
@@ -661,12 +653,6 @@ function EasyCodeWizard({ handoff }: { handoff: EasyCodeHandoff }) {
       </div>
       <span className="ec-version">v0.1</span>
     </header>
-
-    <ol className="ec-progress" aria-label="创建流程">
-      <li>描述产品想法</li>
-      <li>确认工程约束</li>
-      <li>交给 DeepSeek</li>
-    </ol>
 
     <div className="ec-mode-grid" role="group" aria-label="创建模式">
       <button className="ec-mode" type="button" aria-label="简易模式" aria-pressed={mode === 'simple'} data-active={mode === 'simple'} onClick={() => chooseMode('simple')}>
