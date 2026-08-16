@@ -1,6 +1,6 @@
 # EasyCode
 
-EasyCode 是一个面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的点击式应用创建插件。它把常见的项目初始化决策收进一个 Web 向导：用户输入应用主题，选择少量选项，就能在本机得到规划文档或可运行的项目骨架。
+EasyCode 是一个面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的点击式应用创建插件。它把常见的项目初始化决策收进一个 Web 向导：用户输入应用主题，选择少量约束，EasyCode 会创建本地工作区并自动把开发任务交给 DeepSeek。
 
 > 当前版本：`0.1.0`。DeepSeek Harness 仍处于开发者预览阶段，插件接口可能发生不兼容变更。
 
@@ -9,20 +9,27 @@ EasyCode 是一个面向 [DeepSeek Harness](https://github.com/deepseek-ai/deeps
 ### 简易模式
 
 - 只需填写项目名称和应用主题。
-- 固定生成 Vanilla JavaScript + Vite 应用。
-- 默认使用本地开发环境，不初始化 Git，不启用 MCP。
-- 直接执行 Go 工作流，生成可运行的离线事项应用骨架。
+- 技术栈和开发环境默认由 DeepSeek 根据产品目标自动决策。
+- 不初始化 Git，不启用 MCP。
+- 直接执行 Go 工作流，由 DeepSeek 生成并验证应用。
 
 ### 专业模式
 
-- 技术栈：React + Vite、Vue + Vite、Next.js、Node.js API、Vanilla + Vite。
-- 开发环境：本地或 Docker。
+- 技术栈可以交给 DeepSeek 自动决策，也可以从 35+ 个预设中选择：
+  - 前端与内容站点：Vanilla、React、Vue、Svelte、SolidJS、Angular、Astro、Qwik。
+  - 全栈 Web：Next.js、Nuxt、Remix、SvelteKit、TanStack Start。
+  - 后端与 API：Node.js、Express、Fastify、NestJS、Hono、Bun、Deno、FastAPI、Django、Go、Axum、Spring Boot、Ktor、.NET、Laravel、Rails。
+  - 桌面、移动端与扩展：Electron、Tauri、React Native、Expo、Flutter、浏览器扩展。
+  - 任意自定义技术栈。
+- 开发环境可以自动决策，也可指定本地、Docker、Podman、Dev Container、WSL、Nix、远程 SSH、GitHub Codespaces、Kubernetes 或任意自定义环境。
 - 可选择是否初始化以 `main` 为首分支的 Git 仓库。
-- Plan 工作流只创建规划与上下文；Go 工作流同时创建可运行代码。
+- Plan 工作流只完善规划与上下文；Go 工作流要求 DeepSeek 生成可运行代码并执行检查。
 - 可填写独立的设计目标。
 - 可选择是否写入手动确认过的 `.mcp.json`。
 
 “自动搜寻合适的 MCP”在界面中明确标记为 WIP。v0.1 不会为此联网、安装包或修改 MCP 列表。
+
+EasyCode 同时注册在 Harness 首页侧栏和设置页。首页入口会打开独立创建面板；生成后，插件使用 Harness 的工作区与会话服务打开项目，并自动发送开发任务。
 
 ## 安装
 
@@ -38,24 +45,17 @@ npx --yes @deepseek-ai/dsh plugin --profile web add ./dsh-easycode-0.1.0.tgz
 npx --yes @deepseek-ai/dsh web
 ```
 
-打开 Harness Web UI 后，在设置中选择 `EasyCode`。
+打开 Harness Web UI 后，可从首页侧栏或设置页进入 `EasyCode`。
 
 ### 从 GitHub 安装
 
-Git 安装会运行本仓库的 `prepare` 构建脚本。pnpm 10+ 默认要求用户明确允许安装期构建；请只对你审查并信任的提交授权。下面的提交已经完成 v0.1 验证：
+Git 安装会运行本仓库的 `prepare` 构建脚本。pnpm 10+ 默认要求用户明确允许安装期构建；请只对你审查并信任的提交授权。功能合并前可安装当前 GitHub Flow 分支：
 
 ```bash
-npx --yes @deepseek-ai/dsh plugin --profile web add github:TreasureGooldove/dsh-easycode#95a0bb5239240009004a0c70a21a4141348d6aef
+npx --yes @deepseek-ai/dsh plugin --profile web add github:TreasureGooldove/dsh-easycode#feat/easycode-app-wizard
 ```
 
-首次执行时，pnpm 会拒绝未授权的 Git 构建，同时初始化 `web` profile。打开 `%USERPROFILE%\.dsh\profiles\web\pnpm-workspace.yaml`，把错误信息打印的精确包键加入 `allowBuilds`：
-
-```yaml
-allowBuilds:
-  dsh-easycode@https://codeload.github.com/TreasureGooldove/dsh-easycode/tar.gz/95a0bb5239240009004a0c70a21a4141348d6aef: true
-```
-
-随后重新执行上面的安装命令，再运行：
+首次执行时，pnpm 可能拒绝未授权的 Git 构建，同时初始化 `web` profile。打开 `%USERPROFILE%\.dsh\profiles\web\pnpm-workspace.yaml`，把错误信息打印的精确包键加入 `allowBuilds`。随后重新执行安装命令，再运行：
 
 ```bash
 npx --yes @deepseek-ai/dsh web
@@ -104,7 +104,7 @@ npm run build
 打包产物位于 `lib/`：
 
 - `lib/index.js`：Host 插件，注册安全的项目创建路由。
-- `lib/client.js`：Harness Web 客户端插件，在设置页注册 EasyCode 向导。
+- `lib/client.js`：Harness Web 客户端插件，注册首页入口、创建面板和设置页向导，并把任务交给 DeepSeek 会话。
 
 ## 项目结构
 
@@ -120,8 +120,8 @@ src/
 
 ## 路线图
 
-- v0.1：双模式向导、Plan/Go、Docker/本地、Git、手动 MCP。
-- v0.2：模板扩展、生成后验证、可恢复的创建历史。
+- v0.1：双模式向导、DeepSeek 自动决策、35+ 技术栈、丰富开发环境、Plan/Go、Git、手动 MCP、首页入口。
+- v0.2：更多生成后验证、可恢复的创建历史与可共享预设。
 - WIP：基于项目需求发现 MCP；在实现明确的来源、审查和授权流程之前不会自动安装。
 
 ## 许可证

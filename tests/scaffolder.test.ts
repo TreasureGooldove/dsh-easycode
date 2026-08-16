@@ -16,8 +16,10 @@ function config(): EasyCodeRequest {
     mode: 'simple',
     projectName: 'safe-app',
     topic: '一个简单应用',
-    stack: 'vanilla',
-    environment: 'local',
+    stack: 'auto',
+    stackDetail: '',
+    environment: 'auto',
+    environmentDetail: '',
     initializeGit: false,
     workflow: 'go',
     designGoal: '',
@@ -33,7 +35,7 @@ describe('generateProject', () => {
     const result = await generateProject(root, config())
 
     expect(result.outputPath).toBe(join(root, 'safe-app'))
-    expect((await stat(join(root, 'safe-app', 'src', 'main.js'))).isFile()).toBe(true)
+    expect((await stat(join(root, 'safe-app', 'EASYCODE.md'))).isFile()).toBe(true)
     expect(await readFile(join(root, 'safe-app', '.easycode', 'config.json'), 'utf8')).toContain('safe-app')
   })
 

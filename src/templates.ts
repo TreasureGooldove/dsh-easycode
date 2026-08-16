@@ -151,12 +151,82 @@ h1 {
 `
 }
 
+const STACK_LABELS: Record<AppStack, string> = {
+  auto: '由 DeepSeek 根据需求自动决策',
+  vanilla: 'Vanilla JavaScript + Vite',
+  'react-vite': 'React + Vite',
+  'vue-vite': 'Vue + Vite',
+  'svelte-vite': 'Svelte + Vite',
+  'solid-vite': 'SolidJS + Vite',
+  angular: 'Angular',
+  astro: 'Astro',
+  qwik: 'Qwik',
+  nextjs: 'Next.js',
+  nuxt: 'Nuxt',
+  remix: 'Remix',
+  sveltekit: 'SvelteKit',
+  'tanstack-start': 'TanStack Start',
+  'node-api': 'Node.js API',
+  express: 'Express',
+  fastify: 'Fastify',
+  nestjs: 'NestJS',
+  hono: 'Hono',
+  'bun-api': 'Bun API',
+  'deno-api': 'Deno API',
+  'python-fastapi': 'Python + FastAPI',
+  'python-django': 'Python + Django',
+  'go-api': 'Go API',
+  'rust-axum': 'Rust + Axum',
+  'java-spring': 'Java + Spring Boot',
+  'kotlin-ktor': 'Kotlin + Ktor',
+  'dotnet-api': '.NET Web API',
+  'php-laravel': 'PHP + Laravel',
+  'ruby-rails': 'Ruby on Rails',
+  electron: 'Electron',
+  tauri: 'Tauri',
+  'react-native': 'React Native',
+  expo: 'Expo',
+  flutter: 'Flutter',
+  'browser-extension': '浏览器扩展',
+  custom: '自定义技术栈',
+}
+
+const ENVIRONMENT_LABELS: Record<EasyCodeRequest['environment'], string> = {
+  auto: '由 DeepSeek 根据技术栈自动决策',
+  local: '本地开发',
+  docker: 'Docker',
+  podman: 'Podman',
+  devcontainer: 'Dev Container',
+  wsl: 'WSL',
+  nix: 'Nix / devenv',
+  'remote-ssh': '远程 SSH',
+  codespaces: 'GitHub Codespaces',
+  kubernetes: 'Kubernetes 开发环境',
+  custom: '自定义开发环境',
+}
+
+const BUILTIN_STACKS = new Set<AppStack>(['vanilla', 'react-vite', 'vue-vite', 'nextjs', 'node-api'])
+const BACKEND_STACKS = new Set<AppStack>([
+  'node-api', 'express', 'fastify', 'nestjs', 'hono', 'bun-api', 'deno-api',
+  'python-fastapi', 'python-django', 'go-api', 'rust-axum', 'java-spring', 'kotlin-ktor',
+  'dotnet-api', 'php-laravel', 'ruby-rails',
+])
+
+function stackLabel(config: EasyCodeRequest): string {
+  return config.stack === 'custom' ? config.stackDetail : STACK_LABELS[config.stack]
+}
+
+function environmentLabel(config: EasyCodeRequest): string {
+  return config.environment === 'custom' ? config.environmentDetail : ENVIRONMENT_LABELS[config.environment]
+}
+
 function projectReadme(config: EasyCodeRequest): string {
+  const hasStarter = config.workflow === 'go' && BUILTIN_STACKS.has(config.stack)
   const nextStep = config.workflow === 'plan'
     ? `## 下一步
 
-当前目录只包含项目规划和稳定上下文，尚未生成应用代码。请先审阅 \`PLAN.md\`，确认范围后再进入 Go 工作流。`
-    : `## 启动
+当前目录包含项目规划和稳定上下文。DeepSeek 将先完善方案，不进入代码实现。`
+    : hasStarter ? `## 启动
 
 \`\`\`bash
 npm install
@@ -168,6 +238,9 @@ ${config.environment === 'docker' ? `也可以运行：
 \`\`\`bash
 docker compose up --build
 \`\`\`` : ''}`
+    : `## 下一步
+
+EasyCode 已准备项目上下文，DeepSeek 将读取 \`EASYCODE.md\` 与 \`PLAN.md\`，决定工程细节并生成应用。`
   return `# ${config.projectName}
 
 由 EasyCode 为 DeepSeek Harness 生成。
@@ -180,15 +253,17 @@ ${nextStep}
 
 ## 开发约定
 
-- 技术栈：${stackLabel(config.stack)}
-- 工作流：${config.workflow === 'plan' ? 'Plan（只生成规划）' : 'Go（已生成可运行骨架）'}
+- 技术栈：${stackLabel(config)}
+- 开发环境：${environmentLabel(config)}
+- 工作流：${config.workflow === 'plan' ? 'Plan（只完善规划）' : hasStarter ? 'Go（已有基础骨架，交给 DeepSeek 完成）' : 'Go（交给 DeepSeek 生成）'}
 - 设计目标：${config.designGoal || '清晰、快速、移动端可用'}
 - MCP：${config.mcpEnabled ? '已写入 .mcp.json' : '未启用'}
 `
 }
 
 function projectPlan(config: EasyCodeRequest): string {
-  const milestones = config.stack === 'node-api'
+  const backend = BACKEND_STACKS.has(config.stack)
+  const milestones = backend
     ? `1. 定义资源模型、接口契约和错误格式。
 2. 实现健康检查、核心路由与输入校验。
 3. 补齐鉴权边界、日志、持久化策略和接口测试。
@@ -197,7 +272,7 @@ function projectPlan(config: EasyCodeRequest): string {
 2. 实现核心页面、主要输入与结果状态。
 3. 补齐空状态、错误状态、键盘操作和移动端布局。
 4. 运行检查并记录交付说明。`
-  const acceptance = config.stack === 'node-api'
+  const acceptance = backend
     ? `- 健康检查与本地开发命令可以运行。
 - 接口输入有校验，错误响应具有稳定结构。
 - 鉴权和持久化方案不依赖未配置的外部服务。`
@@ -216,10 +291,18 @@ ${config.designGoal || '减少首次使用阻力，保证主要任务在移动�
 
 ## 技术方案
 
-- 技术栈：${stackLabel(config.stack)}
-- 开发环境：${config.environment === 'docker' ? 'Docker' : '本地 Node.js'}
+- 技术栈：${stackLabel(config)}
+- 开发环境：${environmentLabel(config)}
 - Git 仓库：${config.initializeGit ? '初始化' : '不初始化'}
 - MCP：${config.mcpEnabled ? '手动配置' : '关闭'}
+
+## 架构约束
+
+- 先围绕核心功能选择最小可维护架构；当技术栈为“自动”时，由 DeepSeek 说明关键取舍。
+- 同一 TypeScript 团队的全栈项目优先端到端类型安全；跨语言或公开接口优先 OpenAPI；简单页面使用类型化请求封装即可。
+- 仅在确有账户能力时加入认证。Web 默认使用安全的服务端会话，不把密钥或敏感令牌写入客户端。
+- 单向实时更新优先 SSE，只有需要双向低延迟通信时才使用 WebSocket。
+- 服务端应包含输入校验、统一错误结构、健康检查与优雅退出；测试和部署策略随所选技术栈落地。
 
 ## 里程碑
 
@@ -245,29 +328,24 @@ ${config.topic}
 
 ${config.designGoal || '界面直接、结构清楚、默认可运行。'}
 
-## 决策
+## 用户约束
 
 - 模式：${config.mode === 'simple' ? '简易模式' : '专业模式'}
 - 工作流：${config.workflow}
-- 技术栈：${config.stack}
-- 环境：${config.environment}
+- 技术栈：${stackLabel(config)}
+- 环境：${environmentLabel(config)}
 - Git：${config.initializeGit ? '是' : '否'}
 - MCP：${config.mcpEnabled ? '手动启用' : '关闭'}
 
-## 继续开发提示
+## DeepSeek 执行规则
 
-保持现有技术栈和目录结构，先验证当前脚本，再按 PLAN.md 的里程碑继续。不要自动安装或搜索 MCP；该能力在 EasyCode v1 中仍为 WIP。
+- 技术栈或环境为“自动”时，根据用户目标、交付形态、团队维护成本和部署条件自行选择，并在 README 中记录理由。
+- 用户指定技术栈或环境时，把它视为强约束；只有在明显不兼容时才选择最接近的替代方案并说明原因。
+- Plan 工作流只完善调研、架构、任务拆分和验收标准，不实现应用代码。
+- Go 工作流应实现可运行应用，补齐必要的校验、错误状态、测试和启动说明，并实际运行适合该技术栈的检查。
+- 先读取现有文件；若已有基础骨架，在其上继续，不要无故重建。
+- 不要自动搜索或安装 MCP；该能力在 EasyCode v1 中仍为 WIP。
 `
-}
-
-function stackLabel(stack: AppStack): string {
-  return ({
-    vanilla: 'Vanilla JavaScript + Vite',
-    'react-vite': 'React + Vite',
-    'vue-vite': 'Vue + Vite',
-    nextjs: 'Next.js',
-    'node-api': 'Node.js API',
-  })[stack]
 }
 
 function baseFiles(config: EasyCodeRequest): ProjectFiles {
@@ -276,7 +354,25 @@ function baseFiles(config: EasyCodeRequest): ProjectFiles {
   files.set('PLAN.md', projectPlan(config))
   files.set('EASYCODE.md', easyCodeBrief(config))
   files.set('.easycode/config.json', json(config))
-  files.set('.gitignore', 'node_modules/\ndist/\n.next/\n.env\n.env.*\n!.env.example\n*.log\n')
+  files.set('.gitignore', `node_modules/
+dist/
+build/
+.next/
+.nuxt/
+.svelte-kit/
+.venv/
+__pycache__/
+target/
+bin/
+obj/
+.dart_tool/
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+*.log
+`)
   if (config.mcpEnabled) files.set('.mcp.json', json({ mcpServers: config.mcpServers }))
   return files
 }
@@ -627,15 +723,17 @@ function merge(target: ProjectFiles, source: ProjectFiles): void {
 export function buildProjectFiles(config: EasyCodeRequest): ProjectFiles {
   const files = baseFiles(config)
   if (config.workflow === 'go') {
-    const applicationFiles = ({
+    const builder: ((config: EasyCodeRequest) => ProjectFiles) | undefined = ({
       vanilla: vanillaFiles,
       'react-vite': reactFiles,
       'vue-vite': vueFiles,
       nextjs: nextFiles,
       'node-api': nodeApiFiles,
-    })[config.stack](config)
-    merge(files, applicationFiles)
-    if (config.environment === 'docker') merge(files, dockerFiles(config))
+    } as Partial<Record<AppStack, (config: EasyCodeRequest) => ProjectFiles>>)[config.stack]
+    if (builder !== undefined) {
+      merge(files, builder(config))
+      if (config.environment === 'docker') merge(files, dockerFiles(config))
+    }
   }
   return files
 }

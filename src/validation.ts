@@ -33,6 +33,16 @@ function requiredString(value: unknown, field: string, maxLength: number): strin
   return normalized
 }
 
+function optionalString(value: unknown, field: string, maxLength: number): string {
+  if (value === undefined) return ''
+  if (typeof value !== 'string') throw new ValidationError('该字段必须是字符串', field)
+  const normalized = value.trim()
+  if (normalized.length > maxLength) {
+    throw new ValidationError(`最多允许 ${maxLength} 个字符`, field)
+  }
+  return normalized
+}
+
 function enumValue<T extends string>(
   value: unknown,
   allowed: readonly T[],
@@ -123,8 +133,16 @@ export function parseEasyCodeRequest(value: unknown): EasyCodeRequest {
   const topic = requiredString(value.topic, 'topic', 2000)
   const projectName = normalizeProjectName(value.projectName)
   const isSimple = mode === 'simple'
-  const stack = enumValue(value.stack, APP_STACKS, 'stack', isSimple ? 'vanilla' : 'react-vite') as AppStack
-  const environment = enumValue(value.environment, DEV_ENVIRONMENTS, 'environment', 'local') as DevEnvironment
+  const stack = enumValue(value.stack, APP_STACKS, 'stack', 'auto') as AppStack
+  const environment = enumValue(value.environment, DEV_ENVIRONMENTS, 'environment', 'auto') as DevEnvironment
+  const stackDetail = optionalString(value.stackDetail, 'stackDetail', 300)
+  const environmentDetail = optionalString(value.environmentDetail, 'environmentDetail', 300)
+  if (!isSimple && stack === 'custom' && stackDetail.length === 0) {
+    throw new ValidationError('请选择具体技术栈，或填写自定义技术栈', 'stackDetail')
+  }
+  if (!isSimple && environment === 'custom' && environmentDetail.length === 0) {
+    throw new ValidationError('请选择具体开发环境，或填写自定义环境', 'environmentDetail')
+  }
   const workflow = enumValue(value.workflow, WORKFLOWS, 'workflow', isSimple ? 'go' : 'plan') as WorkflowMode
   const designGoal = typeof value.designGoal === 'string'
     ? value.designGoal.trim().slice(0, 2000)
@@ -136,8 +154,10 @@ export function parseEasyCodeRequest(value: unknown): EasyCodeRequest {
     mode,
     projectName,
     topic,
-    stack: isSimple ? 'vanilla' : stack,
-    environment: isSimple ? 'local' : environment,
+    stack: isSimple ? 'auto' : stack,
+    stackDetail: !isSimple && stack === 'custom' ? stackDetail : '',
+    environment: isSimple ? 'auto' : environment,
+    environmentDetail: !isSimple && environment === 'custom' ? environmentDetail : '',
     initializeGit,
     workflow: isSimple ? 'go' : workflow,
     designGoal,

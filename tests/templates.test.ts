@@ -8,7 +8,9 @@ function config(overrides: Partial<EasyCodeRequest> = {}): EasyCodeRequest {
     projectName: 'demo-app',
     topic: '一个可离线使用的任务管理应用',
     stack: 'react-vite',
+    stackDetail: '',
     environment: 'local',
+    environmentDetail: '',
     initializeGit: false,
     workflow: 'go',
     designGoal: '克制、清楚、移动端优先',
@@ -25,7 +27,7 @@ describe('buildProjectFiles', () => {
     expect(files.has('EASYCODE.md')).toBe(true)
     expect(files.has('.mcp.json')).toBe(true)
     expect(files.has('package.json')).toBe(false)
-    expect(files.get('README.md')).toContain('尚未生成应用代码')
+    expect(files.get('README.md')).toContain('不进入代码实现')
     expect(files.get('README.md')).not.toContain('npm run dev')
   })
 
@@ -56,6 +58,29 @@ describe('buildProjectFiles', () => {
       const files = buildProjectFiles(config({ stack: stack as EasyCodeRequest['stack'] }))
       expect(files.has(entry), `${stack} should create ${entry}`).toBe(true)
     }
+  })
+
+  it('creates an AI-ready brief for automatic and extended stacks', () => {
+    const automatic = buildProjectFiles(config({ stack: 'auto', environment: 'auto' }))
+    expect(automatic.has('EASYCODE.md')).toBe(true)
+    expect(automatic.has('package.json')).toBe(false)
+    expect(automatic.get('EASYCODE.md')).toContain('由 DeepSeek 根据需求自动决策')
+
+    const extended = buildProjectFiles(config({ stack: 'rust-axum', environment: 'devcontainer' }))
+    expect(extended.get('PLAN.md')).toContain('Rust + Axum')
+    expect(extended.get('PLAN.md')).toContain('Dev Container')
+    expect(extended.get('PLAN.md')).toContain('统一错误结构')
+  })
+
+  it('preserves custom stack and environment constraints for DeepSeek', () => {
+    const files = buildProjectFiles(config({
+      stack: 'custom',
+      stackDetail: 'Elixir + Phoenix LiveView',
+      environment: 'custom',
+      environmentDetail: '内网 Linux 构建机',
+    }))
+    expect(files.get('EASYCODE.md')).toContain('Elixir + Phoenix LiveView')
+    expect(files.get('EASYCODE.md')).toContain('内网 Linux 构建机')
   })
 
   it('does not emit placeholder media URLs', () => {
