@@ -1,6 +1,5 @@
 node_modules/
-# lib/ is committed so DSH can install the Git-hosted plugin without running
-# lifecycle build scripts that pnpm blocks by default.
+lib/
 output/
 .playwright-cli/
 coverage/
