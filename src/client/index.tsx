@@ -77,217 +77,267 @@ const ENVIRONMENTS = ENVIRONMENT_GROUPS.flatMap(group => group.items)
 
 const STYLES = `
 .ec-root {
-  --ec-panel: var(--dsw-alias-bg-layer-1, #ffffff);
-  --ec-text: var(--dsw-alias-label-primary, #202725);
-  --ec-muted: var(--dsw-alias-label-tertiary, #69716e);
-  --ec-border: var(--dsw-alias-border-l2, #d9dcd8);
-  --ec-accent: #26786b;
-  --ec-accent-strong: #1d665b;
-  --ec-accent-label: #26786b;
-  --ec-soft: #e5f0ed;
-  --ec-switch-off: #b9bfbc;
-  --ec-warn: var(--dsw-alias-state-warn-label, #8a5a20);
-  --ec-error: var(--dsw-alias-state-error-primary, #9c3f36);
-  --ec-result-border: #9ec6bc;
+  --ec-canvas: #f6f8f7;
+  --ec-panel: #ffffff;
+  --ec-panel-raised: #ffffff;
+  --ec-panel-soft: #eef7f3;
+  --ec-text: #17211e;
+  --ec-muted: #5f6e69;
+  --ec-faint: #7f8b87;
+  --ec-border: #d8e0dd;
+  --ec-border-strong: #bac8c3;
+  --ec-accent: #177a62;
+  --ec-accent-strong: #0e624d;
+  --ec-accent-soft: #e2f4ed;
+  --ec-accent-contrast: #ffffff;
+  --ec-switch-off: #aebbb7;
+  --ec-warn: #84551a;
+  --ec-warn-soft: #fff6e5;
+  --ec-error: #a62b2b;
+  --ec-error-soft: #fff1f0;
+  --ec-success: #176b50;
+  --ec-shadow-sm: 0 1px 2px rgba(16, 43, 35, .05);
+  --ec-shadow-md: 0 18px 48px rgba(16, 43, 35, .10);
+  --ec-focus: rgba(23, 122, 98, .32);
   color: var(--ec-text);
   min-height: 100%;
-  padding: 6px 2px 36px;
+  padding: 8px 2px 44px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   container-type: inline-size;
 }
 .ec-root, .ec-root * { box-sizing: border-box; }
 
 body[data-ds-dark-theme] .ec-root {
-  --ec-accent-label: #62c9b6;
-  --ec-soft: #193a35;
-  --ec-switch-off: #5b6260;
-  --ec-result-border: #357f73;
+  --ec-canvas: #0f172a;
+  --ec-panel: #172033;
+  --ec-panel-raised: #1b263b;
+  --ec-panel-soft: #152e2b;
+  --ec-text: #f8fafc;
+  --ec-muted: #b2bfcc;
+  --ec-faint: #94a3b8;
+  --ec-border: #334155;
+  --ec-border-strong: #4b5d73;
+  --ec-accent: #22c55e;
+  --ec-accent-strong: #4ade80;
+  --ec-accent-soft: #173b2b;
+  --ec-accent-contrast: #052e16;
+  --ec-switch-off: #526174;
+  --ec-warn: #f5c56b;
+  --ec-warn-soft: #3a2c18;
+  --ec-error: #ffaaa4;
+  --ec-error-soft: #3e2327;
+  --ec-success: #79dda5;
+  --ec-shadow-sm: 0 1px 2px rgba(0, 0, 0, .24);
+  --ec-shadow-md: 0 24px 64px rgba(0, 0, 0, .34);
+  --ec-focus: rgba(74, 222, 128, .34);
 }
 
-.ec-hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; border-bottom: 1px solid var(--ec-border); padding: 4px 0 26px; }
-.ec-kicker { margin: 0 0 9px; color: var(--ec-accent-label); font-size: 11px; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; }
-.ec-title { margin: 0; font-size: clamp(30px, 5vw, 48px); line-height: 1; letter-spacing: -.045em; }
-.ec-intro { max-width: 600px; margin: 14px 0 0; color: var(--ec-muted); line-height: 1.65; }
-.ec-version { border: 1px solid var(--ec-border); border-radius: 999px; padding: 6px 10px; color: var(--ec-muted); font-size: 12px; }
+.ec-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: end;
+  padding: 12px 4px 28px;
+  overflow: hidden;
+}
+.ec-hero::after {
+  content: '';
+  position: absolute;
+  right: 8%;
+  bottom: -70px;
+  width: 240px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ec-accent) 15%, transparent), transparent 68%);
+  pointer-events: none;
+}
+.ec-kicker { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; color: var(--ec-accent); font-size: 11px; font-weight: 760; letter-spacing: .16em; text-transform: uppercase; }
+.ec-kicker::before { content: ''; width: 22px; height: 1px; background: currentColor; }
+.ec-title { max-width: 720px; margin: 0; font-size: clamp(34px, 5vw, 54px); line-height: 1.02; letter-spacing: -.052em; text-wrap: balance; }
+.ec-intro { max-width: 660px; margin: 16px 0 0; color: var(--ec-muted); font-size: 15px; line-height: 1.7; }
+.ec-version { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 7px; min-height: 30px; border: 1px solid var(--ec-border-strong); border-radius: 999px; background: var(--ec-panel); padding: 5px 11px; color: var(--ec-muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; box-shadow: var(--ec-shadow-sm); }
+.ec-version::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ec-accent); box-shadow: 0 0 0 3px var(--ec-accent-soft); }
 
-.ec-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 26px 0; }
-.ec-mode { min-height: 108px; border: 1px solid var(--ec-border); border-radius: 14px; background: var(--ec-panel); color: inherit; padding: 18px; text-align: left; cursor: pointer; transition: border-color 160ms ease, transform 160ms ease, background 160ms ease; }
-.ec-mode:hover { border-color: var(--ec-accent); }
+.ec-progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 4px 24px; padding-top: 18px; border-top: 1px solid var(--ec-border); list-style: none; counter-reset: ec-step; }
+.ec-progress li { display: flex; align-items: center; gap: 9px; min-width: 0; color: var(--ec-faint); font-size: 12px; }
+.ec-progress li::before { counter-increment: ec-step; content: counter(ec-step); display: grid; place-items: center; flex: 0 0 24px; width: 24px; height: 24px; border: 1px solid var(--ec-border); border-radius: 50%; background: var(--ec-panel); color: var(--ec-muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10px; }
+.ec-progress li:first-child { color: var(--ec-text); font-weight: 650; }
+.ec-progress li:first-child::before { border-color: var(--ec-accent); background: var(--ec-accent); color: var(--ec-accent-contrast); }
+
+.ec-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 0 0 26px; }
+.ec-mode { position: relative; min-height: 176px; border: 1px solid var(--ec-border); border-radius: 16px; background: var(--ec-panel); color: inherit; padding: 18px; text-align: left; cursor: pointer; box-shadow: var(--ec-shadow-sm); transition: border-color 160ms ease, box-shadow 180ms ease, transform 120ms ease, background 180ms ease; touch-action: manipulation; }
+.ec-mode:hover { border-color: var(--ec-border-strong); box-shadow: 0 10px 28px rgba(16, 43, 35, .09); }
 .ec-mode:active { transform: scale(.99); }
-.ec-mode[data-active='true'] { border-color: var(--ec-accent); background: var(--ec-soft); }
-.ec-mode strong { display: block; font-size: 16px; }
-.ec-mode span { display: block; margin-top: 7px; color: var(--ec-muted); font-size: 13px; line-height: 1.5; }
+.ec-mode[data-active='true'] { border-color: var(--ec-accent); background: linear-gradient(135deg, var(--ec-accent-soft), var(--ec-panel) 72%); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ec-accent) 22%, transparent), var(--ec-shadow-sm); }
+.ec-mode-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.ec-mode-icon { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--ec-border); border-radius: 11px; background: var(--ec-canvas); color: var(--ec-muted); }
+.ec-mode[data-active='true'] .ec-mode-icon { border-color: color-mix(in srgb, var(--ec-accent) 45%, var(--ec-border)); background: var(--ec-accent); color: var(--ec-accent-contrast); }
+.ec-mode-badge { display: inline-flex; align-items: center; min-height: 24px; border: 1px solid var(--ec-border); border-radius: 999px; padding: 3px 8px; color: var(--ec-muted); font-size: 10px; font-weight: 680; }
+.ec-mode strong { display: block; margin-top: 14px; font-size: 17px; letter-spacing: -.015em; }
+.ec-mode-copy { display: block; margin-top: 7px; color: var(--ec-muted); font-size: 13px; line-height: 1.55; }
+.ec-mode-features { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 13px; }
+.ec-mode-features span { display: inline-flex; align-items: center; gap: 5px; color: var(--ec-faint); font-size: 10px; }
+.ec-mode-features span::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--ec-accent); }
 
-.ec-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(230px, 290px); gap: 24px; align-items: start; }
-.ec-form { display: grid; gap: 22px; }
-.ec-section { border-top: 1px solid var(--ec-border); padding-top: 20px; }
-.ec-section:first-child { border-top: 0; padding-top: 0; }
-.ec-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
-.ec-section-head h3 { margin: 0; font-size: 15px; letter-spacing: -.01em; }
-.ec-section-head span { color: var(--ec-muted); font-size: 12px; }
-.ec-field { display: grid; gap: 7px; }
-.ec-field + .ec-field { margin-top: 14px; }
-.ec-label { font-size: 13px; font-weight: 650; }
-.ec-help { margin: 0; color: var(--ec-muted); font-size: 12px; line-height: 1.55; }
+.ec-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, 300px); gap: 20px; align-items: start; }
+.ec-form { display: grid; gap: 14px; min-width: 0; }
+.ec-section { border: 1px solid var(--ec-border); border-radius: 16px; background: var(--ec-panel); padding: 20px; box-shadow: var(--ec-shadow-sm); }
+.ec-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.ec-section-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ec-section-icon { display: grid; place-items: center; flex: 0 0 auto; width: 32px; height: 32px; border-radius: 9px; background: var(--ec-accent-soft); color: var(--ec-accent); }
+.ec-section-head h3 { margin: 0; font-size: 15px; line-height: 1.35; letter-spacing: -.01em; }
+.ec-section-head p { margin: 3px 0 0; color: var(--ec-muted); font-size: 11px; line-height: 1.45; }
+.ec-section-meta { flex: none; border: 1px solid var(--ec-border); border-radius: 999px; padding: 3px 8px; color: var(--ec-faint); font-size: 10px; }
+.ec-field { display: grid; gap: 7px; min-width: 0; }
+.ec-field + .ec-field { margin-top: 16px; }
+.ec-label { display: flex; align-items: center; gap: 5px; color: var(--ec-text); font-size: 13px; font-weight: 680; }
+.ec-required { color: var(--ec-error); }
+.ec-help { min-height: 18px; margin: 0; color: var(--ec-muted); font-size: 11px; line-height: 1.55; }
+.ec-field-error { min-height: 18px; margin: 0; color: var(--ec-error); font-size: 11px; font-weight: 620; line-height: 1.5; }
 .ec-input, .ec-textarea, .ec-select {
   width: 100%;
-  border: 1px solid var(--ec-border);
-  border-radius: 9px;
-  background: var(--ec-panel);
+  min-height: 46px;
+  border: 1px solid var(--ec-border-strong);
+  border-radius: 10px;
+  background: var(--ec-panel-raised);
   color: var(--ec-text);
   font: inherit;
+  font-size: 14px;
   padding: 11px 12px;
+  box-shadow: inset 0 1px 1px rgba(16, 43, 35, .03);
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
 }
-.ec-textarea { min-height: 112px; resize: vertical; line-height: 1.55; }
-.ec-code { min-height: 150px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
-.ec-input:focus, .ec-textarea:focus, .ec-select:focus, .ec-button:focus-visible, .ec-mode:focus-visible, .ec-choice:focus-visible { outline: 3px solid color-mix(in srgb, var(--ec-accent) 35%, transparent); outline-offset: 2px; }
+.ec-input::placeholder, .ec-textarea::placeholder { color: var(--ec-faint); opacity: .82; }
+.ec-input:hover, .ec-textarea:hover, .ec-select:hover { border-color: color-mix(in srgb, var(--ec-accent) 45%, var(--ec-border-strong)); }
+.ec-input[aria-invalid='true'], .ec-textarea[aria-invalid='true'], .ec-select[aria-invalid='true'] { border-color: var(--ec-error); background: var(--ec-error-soft); }
+.ec-textarea { min-height: 116px; resize: vertical; line-height: 1.6; }
+.ec-code { min-height: 160px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
+.ec-input:focus, .ec-textarea:focus, .ec-select:focus, .ec-button:focus-visible, .ec-mode:focus-visible, .ec-copy:focus-visible, .ec-switch:focus-visible { outline: 3px solid var(--ec-focus); outline-offset: 2px; border-color: var(--ec-accent); }
 
-.ec-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.ec-decision-note { margin: 10px 0 0; border-left: 3px solid var(--ec-accent); background: var(--ec-soft); padding: 9px 11px; color: var(--ec-muted); font-size: 12px; line-height: 1.55; }
-.ec-stack-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-.ec-choice { border: 1px solid var(--ec-border); border-radius: 10px; background: var(--ec-panel); color: inherit; padding: 12px; text-align: left; cursor: pointer; }
-.ec-choice[data-active='true'] { border-color: var(--ec-accent); box-shadow: inset 3px 0 0 var(--ec-accent); }
-.ec-choice strong { display: block; font-size: 13px; }
-.ec-choice span { display: block; margin-top: 4px; color: var(--ec-muted); font-size: 11px; }
+.ec-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ec-decision-note { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0 0; border: 1px solid color-mix(in srgb, var(--ec-accent) 28%, var(--ec-border)); border-radius: 11px; background: var(--ec-accent-soft); padding: 11px 12px; color: var(--ec-muted); font-size: 11px; line-height: 1.55; }
+.ec-decision-note svg { flex: 0 0 auto; margin-top: 1px; color: var(--ec-accent); }
+.ec-auto-plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+.ec-auto-plan div { border: 1px solid var(--ec-border); border-radius: 11px; background: var(--ec-canvas); padding: 11px; }
+.ec-auto-plan strong { display: block; font-size: 11px; }
+.ec-auto-plan span { display: block; margin-top: 4px; color: var(--ec-muted); font-size: 10px; line-height: 1.45; }
 
-.ec-switch-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--ec-border); }
+.ec-switch-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; min-height: 64px; padding: 10px 0; border-bottom: 1px solid var(--ec-border); }
 .ec-switch-row:last-child { border-bottom: 0; }
 .ec-switch-copy strong { display: block; font-size: 13px; }
-.ec-switch-copy span { display: block; margin-top: 4px; color: var(--ec-muted); font-size: 12px; line-height: 1.45; }
-.ec-switch { position: relative; width: 42px; height: 24px; border: 0; border-radius: 999px; background: var(--ec-switch-off); cursor: pointer; transition: background 160ms ease; }
-.ec-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform 160ms ease; }
-.ec-switch[aria-checked='true'] { background: var(--ec-accent); }
+.ec-switch-copy > span { display: block; margin-top: 4px; color: var(--ec-muted); font-size: 11px; line-height: 1.5; }
+.ec-switch { position: relative; width: 46px; height: 44px; border: 0; border-radius: 999px; background: transparent; cursor: pointer; transition: opacity 150ms ease; touch-action: manipulation; }
+.ec-switch::before { content: ''; position: absolute; inset: 8px 0; border-radius: 999px; background: var(--ec-switch-off); transition: background 150ms ease, box-shadow 150ms ease; }
+.ec-switch::after { content: ''; position: absolute; top: 12px; left: 4px; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; box-shadow: 0 1px 3px rgba(0, 0, 0, .22); transition: transform 160ms cubic-bezier(.2, .8, .2, 1); }
+.ec-switch[aria-checked='true']::before { background: var(--ec-accent); }
 .ec-switch[aria-checked='true']::after { transform: translateX(18px); }
-.ec-switch:disabled { cursor: not-allowed; opacity: .55; }
-.ec-wip { display: inline-flex; margin-left: 7px; border: 1px solid #c79c5e; border-radius: 999px; padding: 1px 6px; color: var(--ec-warn); font-size: 9px; letter-spacing: .08em; }
+.ec-switch:disabled { cursor: not-allowed; opacity: .45; }
+.ec-wip { display: inline-flex !important; vertical-align: middle; margin-left: 6px !important; border: 1px solid color-mix(in srgb, var(--ec-warn) 58%, transparent); border-radius: 999px; background: var(--ec-warn-soft); padding: 2px 7px; color: var(--ec-warn) !important; font-size: 9px !important; font-weight: 760; letter-spacing: .08em; line-height: 1.2 !important; }
 
-.ec-summary { position: sticky; top: 12px; border: 1px solid var(--ec-border); border-radius: 14px; background: var(--ec-panel); padding: 18px; }
-.ec-summary h3 { margin: 0 0 15px; font-size: 14px; }
-.ec-summary dl { display: grid; gap: 10px; margin: 0; }
-.ec-summary dl > div { display: grid; grid-template-columns: 72px 1fr; gap: 10px; }
-.ec-summary dt { color: var(--ec-muted); font-size: 12px; }
-.ec-summary dd { min-width: 0; margin: 0; font-size: 12px; font-weight: 620; overflow-wrap: anywhere; }
-.ec-action { margin-top: 18px; }
-.ec-button { width: 100%; border: 0; border-radius: 9px; background: var(--ec-accent); color: #fff; padding: 12px 15px; font: inherit; font-weight: 720; cursor: pointer; transition: background 160ms ease, transform 160ms ease; }
-.ec-button:hover { background: var(--ec-accent-strong); }
-.ec-button:active { transform: scale(.98); }
-.ec-button:disabled { cursor: wait; opacity: .65; }
-.ec-error { margin: 12px 0 0; color: var(--ec-error); font-size: 12px; line-height: 1.5; }
-.ec-result { margin-top: 14px; border: 1px solid var(--ec-result-border); border-radius: 10px; background: var(--ec-soft); padding: 13px; }
-.ec-result strong { display: block; font-size: 13px; }
-.ec-path { margin: 7px 0 0; color: var(--ec-muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
-.ec-copy { margin-top: 10px; border: 1px solid var(--ec-border); border-radius: 7px; background: var(--ec-panel); color: inherit; padding: 7px 9px; font: inherit; font-size: 11px; cursor: pointer; }
-.ec-footnote { margin: 14px 0 0; color: var(--ec-muted); font-size: 11px; line-height: 1.5; }
+.ec-error-summary { border: 1px solid color-mix(in srgb, var(--ec-error) 50%, var(--ec-border)); border-radius: 12px; background: var(--ec-error-soft); padding: 12px 14px; color: var(--ec-error); }
+.ec-error-summary:focus { outline: 3px solid var(--ec-focus); outline-offset: 2px; }
+.ec-error-summary strong { display: block; font-size: 12px; }
+.ec-error-summary p { margin: 4px 0 0; font-size: 11px; line-height: 1.5; }
+
+.ec-summary { position: sticky; top: 12px; border: 1px solid var(--ec-border); border-radius: 16px; background: var(--ec-panel-raised); padding: 18px; box-shadow: var(--ec-shadow-md); overflow: hidden; }
+.ec-summary::before { content: ''; display: block; width: 44px; height: 3px; margin-bottom: 16px; border-radius: 999px; background: var(--ec-accent); }
+.ec-summary-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+.ec-summary h3 { margin: 0; font-size: 15px; }
+.ec-summary-subtitle { margin: 4px 0 0; color: var(--ec-muted); font-size: 10px; }
+.ec-summary-mode { border: 1px solid var(--ec-border); border-radius: 999px; background: var(--ec-canvas); padding: 3px 8px; color: var(--ec-muted); font-size: 10px; font-weight: 680; }
+.ec-summary dl { display: grid; gap: 0; margin: 0; }
+.ec-summary dl > div { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--ec-border); }
+.ec-summary dl > div:last-child { border-bottom: 0; }
+.ec-summary dt { color: var(--ec-muted); font-size: 11px; }
+.ec-summary dd { min-width: 0; margin: 0; font-size: 11px; font-weight: 660; text-align: right; overflow-wrap: anywhere; }
+.ec-action { margin-top: 16px; }
+.ec-button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 48px; border: 1px solid transparent; border-radius: 11px; background: var(--ec-accent); color: var(--ec-accent-contrast); padding: 12px 15px; font: inherit; font-size: 13px; font-weight: 760; cursor: pointer; box-shadow: 0 10px 24px color-mix(in srgb, var(--ec-accent) 22%, transparent); transition: background 150ms ease, box-shadow 150ms ease, transform 120ms ease; touch-action: manipulation; }
+.ec-button:hover { background: var(--ec-accent-strong); box-shadow: 0 12px 28px color-mix(in srgb, var(--ec-accent) 28%, transparent); }
+.ec-button:active { transform: scale(.985); }
+.ec-button:disabled { cursor: wait; opacity: .58; box-shadow: none; }
+.ec-spinner { width: 15px; height: 15px; border: 2px solid color-mix(in srgb, var(--ec-accent-contrast) 38%, transparent); border-top-color: var(--ec-accent-contrast); border-radius: 50%; animation: ec-spin .8s linear infinite; }
+@keyframes ec-spin { to { transform: rotate(360deg); } }
+.ec-error { margin: 12px 0 0; color: var(--ec-error); font-size: 11px; line-height: 1.5; }
+.ec-result { margin-top: 14px; border: 1px solid color-mix(in srgb, var(--ec-success) 42%, var(--ec-border)); border-radius: 11px; background: var(--ec-accent-soft); padding: 13px; }
+.ec-result strong { display: flex; align-items: center; gap: 7px; color: var(--ec-success); font-size: 12px; }
+.ec-path { margin: 7px 0 0; color: var(--ec-muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10px; line-height: 1.5; overflow-wrap: anywhere; }
+.ec-copy { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin-top: 10px; border: 1px solid var(--ec-border-strong); border-radius: 8px; background: var(--ec-panel); color: inherit; padding: 7px 9px; font: inherit; font-size: 10px; cursor: pointer; }
+.ec-copy:hover { border-color: var(--ec-accent); background: var(--ec-accent-soft); }
+.ec-footnote { margin: 13px 0 0; color: var(--ec-muted); font-size: 10px; line-height: 1.55; }
 
 .ec-launcher {
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
-  min-height: 36px;
+  min-height: 44px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 9px;
   background: transparent;
   color: var(--dsw-alias-label-primary, #202725);
-  padding: 7px 8px;
+  padding: 8px;
   font: inherit;
   font-size: 14px;
   text-align: left;
   cursor: pointer;
-  transition: background 160ms ease, transform 160ms ease;
+  transition: background 150ms ease, transform 120ms ease;
+  touch-action: manipulation;
 }
 .ec-launcher:hover { background: var(--dsw-alias-interactive-bg-hover, rgba(0, 0, 0, .06)); }
-.ec-launcher:active { transform: scale(.98); }
-.ec-launcher:focus-visible { outline: 2px solid var(--dsw-alias-border-l3, #8d9692); outline-offset: 2px; }
-.ec-launcher[data-wide='false'] { justify-content: center; width: 36px; padding-inline: 0; }
-.ec-launcher-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
-  border: 1px solid color-mix(in srgb, #26786b 55%, transparent);
-  border-radius: 6px;
-  background: color-mix(in srgb, #26786b 14%, transparent);
-  color: #26786b;
-  font-size: 9px;
-  font-weight: 760;
-  letter-spacing: -.03em;
-}
-body[data-ds-dark-theme] .ec-launcher-mark { color: #62c9b6; border-color: rgba(98, 201, 182, .5); background: rgba(98, 201, 182, .12); }
+.ec-launcher:active { transform: scale(.985); }
+.ec-launcher:focus-visible { outline: 3px solid var(--ec-focus, rgba(23, 122, 98, .32)); outline-offset: 2px; }
+.ec-launcher[data-wide='false'] { justify-content: center; width: 44px; padding-inline: 0; }
+.ec-launcher-mark { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 24px; height: 24px; border: 1px solid rgba(23, 122, 98, .45); border-radius: 7px; background: rgba(23, 122, 98, .12); color: #177a62; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 9px; font-weight: 780; letter-spacing: -.03em; }
+body[data-ds-dark-theme] .ec-launcher-mark { color: #4ade80; border-color: rgba(74, 222, 128, .48); background: rgba(74, 222, 128, .12); }
 .ec-launcher-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.ec-overlay {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-  background: var(--dsw-alias-bg-mask-1, rgba(0, 0, 0, .5));
-}
-.ec-overlay-panel {
-  display: flex;
-  flex-direction: column;
-  width: min(1080px, 100%);
-  max-height: 100%;
-  border: 1px solid var(--dsw-alias-border-l2, #d9dcd8);
-  border-radius: 18px;
-  background: var(--dsw-alias-bg-layer-1, #ffffff);
-  color: var(--dsw-alias-label-primary, #202725);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, .28);
-  overflow: hidden;
-}
-.ec-overlay-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  min-height: 58px;
-  padding: 10px 18px;
-  border-bottom: 1px solid var(--dsw-alias-border-l2, #d9dcd8);
-}
-.ec-overlay-brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
-.ec-overlay-brand strong { font-size: 15px; }
-.ec-overlay-brand span { color: var(--dsw-alias-label-tertiary, #69716e); font-size: 12px; }
-.ec-overlay-close {
-  flex: none;
-  border: 1px solid var(--dsw-alias-border-l2, #d9dcd8);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--dsw-alias-label-primary, #202725);
-  padding: 7px 12px;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
+.ec-overlay { position: absolute; z-index: 100; inset: 0; display: grid; place-items: center; padding: 18px; background: var(--dsw-alias-bg-mask-1, rgba(7, 12, 20, .68)); backdrop-filter: blur(8px); }
+.ec-overlay-panel { display: flex; flex-direction: column; width: min(1160px, 100%); max-height: 100%; border: 1px solid var(--dsw-alias-border-l2, #d9dcd8); border-radius: 20px; background: var(--dsw-alias-bg-layer-1, #ffffff); color: var(--dsw-alias-label-primary, #202725); box-shadow: 0 28px 90px rgba(0, 0, 0, .38); overflow: hidden; animation: ec-modal-in 180ms cubic-bezier(.2, .8, .2, 1); }
+@keyframes ec-modal-in { from { opacity: 0; transform: translateY(8px) scale(.992); } to { opacity: 1; transform: none; } }
+.ec-overlay-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 64px; padding: 10px 18px; border-bottom: 1px solid var(--dsw-alias-border-l2, #d9dcd8); }
+.ec-overlay-brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.ec-overlay-logo { display: grid; place-items: center; flex: 0 0 auto; width: 32px; height: 32px; border: 1px solid rgba(23, 122, 98, .4); border-radius: 9px; background: rgba(23, 122, 98, .12); color: #177a62; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10px; font-weight: 800; }
+body[data-ds-dark-theme] .ec-overlay-logo { color: #4ade80; border-color: rgba(74, 222, 128, .42); background: rgba(74, 222, 128, .12); }
+.ec-overlay-brand-copy { min-width: 0; }
+.ec-overlay-brand strong { display: block; font-size: 14px; line-height: 1.3; }
+.ec-overlay-brand span { display: block; margin-top: 2px; color: var(--dsw-alias-label-tertiary, #69716e); font-size: 10px; }
+.ec-overlay-close { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border: 1px solid var(--dsw-alias-border-l2, #d9dcd8); border-radius: 11px; background: transparent; color: var(--dsw-alias-label-primary, #202725); padding: 0; cursor: pointer; transition: background 150ms ease, transform 120ms ease; }
 .ec-overlay-close:hover { background: var(--dsw-alias-interactive-bg-hover, rgba(0, 0, 0, .06)); }
-.ec-overlay-close:focus-visible { outline: 2px solid var(--dsw-alias-border-l3, #8d9692); outline-offset: 2px; }
-.ec-overlay-body { min-height: 0; overflow: auto; padding: 22px 26px 0; }
-.ec-overlay-body > .ec-root { width: min(920px, 100%); margin-inline: auto; }
+.ec-overlay-close:active { transform: scale(.95); }
+.ec-overlay-close:focus-visible { outline: 3px solid rgba(23, 122, 98, .32); outline-offset: 2px; }
+.ec-overlay-body { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 24px 28px 0; background: var(--ec-canvas, transparent); scroll-padding-block: 88px 24px; }
+.ec-overlay-body > .ec-root { width: min(1000px, 100%); margin-inline: auto; }
 
-@media (max-width: 820px) {
-  .ec-layout { grid-template-columns: 1fr; }
-  .ec-summary { position: static; }
-}
 @container (max-width: 820px) {
   .ec-layout { grid-template-columns: 1fr; }
   .ec-summary { position: static; }
 }
-@container (max-width: 520px) {
-  .ec-grid-2 { grid-template-columns: 1fr; }
+@container (max-width: 620px) {
+  .ec-progress { grid-template-columns: 1fr; gap: 6px; }
+  .ec-progress li:not(:first-child) { display: none; }
+  .ec-mode-grid, .ec-grid-2, .ec-auto-plan { grid-template-columns: 1fr; }
+  .ec-mode { min-height: 164px; }
 }
 @media (max-width: 560px) {
-  .ec-overlay { padding: 0; }
-  .ec-overlay-panel { height: 100%; border: 0; border-radius: 0; }
+  .ec-overlay { padding: 0; backdrop-filter: none; }
+  .ec-overlay-panel { width: 100%; height: 100%; max-height: 100%; border: 0; border-radius: 0; animation: none; }
   .ec-overlay-head { padding-inline: 14px; }
   .ec-overlay-body { padding: 18px 14px 0; }
-  .ec-overlay-brand span { display: none; }
-  .ec-hero { grid-template-columns: 1fr; }
+  .ec-overlay-brand-copy > span { display: none; }
+  .ec-root { padding-bottom: max(32px, env(safe-area-inset-bottom)); }
+  .ec-hero { grid-template-columns: 1fr; gap: 16px; padding-top: 4px; }
   .ec-version { justify-self: start; }
-  .ec-mode-grid, .ec-grid-2, .ec-stack-grid { grid-template-columns: 1fr; }
+  .ec-title { font-size: clamp(32px, 11vw, 44px); }
+  .ec-intro { font-size: 15px; }
+  .ec-mode-copy { font-size: 14px; }
+  .ec-section { padding: 16px; }
+  .ec-section-head { align-items: flex-start; }
+  .ec-section-meta { display: none; }
+  .ec-input, .ec-textarea, .ec-select { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ec-root *, .ec-root *::before, .ec-root *::after { transition: none !important; }
+  .ec-root *, .ec-root *::before, .ec-root *::after, .ec-overlay-panel { animation: none !important; scroll-behavior: auto !important; transition: none !important; }
 }
 `
 
@@ -306,6 +356,26 @@ interface LocaleSeat {
 }
 
 type EasyCodeHandoff = (outputPath: string, prompt: string) => Promise<void>
+
+type IconName = 'sparkles' | 'sliders' | 'folder' | 'layers' | 'terminal' | 'palette' | 'plug' | 'arrow' | 'check' | 'info' | 'copy' | 'close'
+
+function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
+  const paths: Record<IconName, JSX.Element> = {
+    sparkles: <><path d="m12 3 1.35 3.65L17 8l-3.65 1.35L12 13l-1.35-3.65L7 8l3.65-1.35L12 3Z" /><path d="m5 14 .8 2.2L8 17l-2.2.8L5 20l-.8-2.2L2 17l2.2-.8L5 14Z" /><path d="m19 12 .65 1.35L21 14l-1.35.65L19 16l-.65-1.35L17 14l1.35-.65L19 12Z" /></>,
+    sliders: <><path d="M4 7h10" /><path d="M18 7h2" /><path d="M4 17h2" /><path d="M10 17h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></>,
+    folder: <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H9l2 2h7.5A2.5 2.5 0 0 1 21 9.5v7A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5v-9Z" />,
+    layers: <><path d="m12 3-9 5 9 5 9-5-9-5Z" /><path d="m3 12 9 5 9-5" /><path d="m3 16 9 5 9-5" /></>,
+    terminal: <><path d="m5 7 4 4-4 4" /><path d="M11 17h8" /><rect x="3" y="4" width="18" height="16" rx="2" /></>,
+    palette: <><circle cx="12" cy="12" r="9" /><circle cx="8" cy="9" r="1" /><circle cx="12" cy="7" r="1" /><circle cx="16" cy="9" r="1" /><path d="M15 16c0 1.1-.9 2-2 2h-1a2 2 0 0 1 0-4h1a2 2 0 0 1 2 2Z" /></>,
+    plug: <><path d="M8 3v5" /><path d="M16 3v5" /><path d="M6 8h12v2a6 6 0 0 1-12 0V8Z" /><path d="M12 16v5" /></>,
+    arrow: <><path d="M5 12h14" /><path d="m14 7 5 5-5 5" /></>,
+    check: <path d="m5 12 4 4L19 6" />,
+    info: <><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 8h.01" /></>,
+    copy: <><rect x="8" y="8" width="11" height="11" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></>,
+    close: <><path d="m6 6 12 12" /><path d="M18 6 6 18" /></>,
+  }
+  return <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>
+}
 
 function EasyCodeLauncher({ wide, t }: LocaleSeat & { wide: boolean }) {
   function open(event: ReactMouseEvent<HTMLButtonElement>) {
@@ -330,6 +400,7 @@ function EasyCodeLauncher({ wide, t }: LocaleSeat & { wide: boolean }) {
 function EasyCodeOverlay({ t, handoff }: LocaleSeat & { handoff: EasyCodeHandoff }) {
   const [open, setOpen] = useState(false)
   const closeRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLElement>(null)
   const returnFocusRef = useRef<HTMLElement | null>(null)
 
   function close() {
@@ -358,6 +429,20 @@ function EasyCodeOverlay({ t, handoff }: LocaleSeat & { handoff: EasyCodeHandoff
       if (event.key === 'Escape') {
         event.preventDefault()
         close()
+        return
+      }
+      if (event.key === 'Tab') {
+        const focusable = Array.from(panelRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])') ?? [])
+        const first = focusable[0]
+        const last = focusable.at(-1)
+        if (first === undefined || last === undefined) return
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault()
+          last.focus()
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault()
+          first.focus()
+        }
       }
     }
     window.addEventListener('keydown', handleKeydown)
@@ -366,10 +451,10 @@ function EasyCodeOverlay({ t, handoff }: LocaleSeat & { handoff: EasyCodeHandoff
 
   if (!open) return null
   return <div className="ec-overlay" onMouseDown={event => { if (event.target === event.currentTarget) close() }}>
-    <section className="ec-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="ec-overlay-title">
+    <section ref={panelRef} className="ec-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="ec-overlay-title" aria-describedby="ec-overlay-hint">
       <header className="ec-overlay-head">
-        <div className="ec-overlay-brand"><strong id="ec-overlay-title">{t('dialogLabel')}</strong><span>{t('dialogHint')}</span></div>
-        <button ref={closeRef} className="ec-overlay-close" type="button" onClick={close}>{t('close')}</button>
+        <div className="ec-overlay-brand"><span className="ec-overlay-logo" aria-hidden="true">EC</span><div className="ec-overlay-brand-copy"><strong id="ec-overlay-title">{t('dialogLabel')}</strong><span id="ec-overlay-hint">{t('dialogHint')}</span></div></div>
+        <button ref={closeRef} className="ec-overlay-close" type="button" aria-label={t('close')} title={t('close')} onClick={close}><Icon name="close" size={19} /></button>
       </header>
       <div className="ec-overlay-body"><EasyCodeWizard handoff={handoff} /></div>
     </section>
@@ -416,6 +501,21 @@ function agentPrompt(config: EasyCodeRequest): string {
   return `这是 EasyCode 创建的项目。请先完整读取 EASYCODE.md、PLAN.md 和 README.md，再继续开发。${action}不要自动搜索或安装 MCP；该能力在 EasyCode v1 中仍为 WIP。`
 }
 
+type EasyCodeField = 'projectName' | 'topic' | 'stackDetail' | 'environmentDetail' | 'mcpJson'
+type EasyCodeFieldErrors = Partial<Record<EasyCodeField, string>>
+
+function validateMcpJson(value: string): string | undefined {
+  try {
+    const parsed = JSON.parse(value) as unknown
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      return '请输入 JSON 对象，例如 { "server": { "command": "..." } }。'
+    }
+    return undefined
+  } catch {
+    return 'JSON 格式不完整，请检查引号、逗号和括号。'
+  }
+}
+
 function EasyCodeWizard({ handoff }: { handoff: EasyCodeHandoff }) {
   const [mode, setMode] = useState<AppMode>('simple')
   const [projectName, setProjectName] = useState('my-app')
@@ -434,17 +534,43 @@ function EasyCodeWizard({ handoff }: { handoff: EasyCodeHandoff }) {
   const [result, setResult] = useState<EasyCodeResult | null>(null)
   const [handoffState, setHandoffState] = useState<'idle' | 'sending' | 'sent' | 'failed'>('idle')
   const [copied, setCopied] = useState(false)
+  const [touched, setTouched] = useState<Partial<Record<EasyCodeField, boolean>>>({})
+  const [showValidationSummary, setShowValidationSummary] = useState(false)
+  const errorSummaryRef = useRef<HTMLDivElement>(null)
 
   const effective = useMemo(() => mode === 'simple'
     ? { stack: 'auto' as AppStack, environment: 'auto' as DevEnvironment, workflow: 'go' as WorkflowMode, git: false, mcp: false }
     : { stack, environment, workflow, git: initializeGit, mcp: mcpEnabled },
   [mode, stack, environment, workflow, initializeGit, mcpEnabled])
 
+  const validationErrors = useMemo<EasyCodeFieldErrors>(() => {
+    const next: EasyCodeFieldErrors = {}
+    if (!projectName.trim()) next.projectName = '请填写项目名称。'
+    if (!topic.trim()) next.topic = '请用一句话描述要创建的应用。'
+    if (mode === 'professional' && stack === 'custom' && !stackDetail.trim()) next.stackDetail = '请填写自定义技术栈。'
+    if (mode === 'professional' && environment === 'custom' && !environmentDetail.trim()) next.environmentDetail = '请填写自定义开发环境。'
+    if (mode === 'professional' && mcpEnabled) {
+      const mcpError = validateMcpJson(mcpJson)
+      if (mcpError !== undefined) next.mcpJson = mcpError
+    }
+    return next
+  }, [projectName, topic, mode, stack, stackDetail, environment, environmentDetail, mcpEnabled, mcpJson])
+
+  function touch(field: EasyCodeField) {
+    setTouched(current => ({ ...current, [field]: true }))
+  }
+
+  function visibleError(field: EasyCodeField): string | undefined {
+    return touched[field] === true ? validationErrors[field] : undefined
+  }
+
   function chooseMode(next: AppMode) {
     setMode(next)
     setError('')
     setResult(null)
     setHandoffState('idle')
+    setTouched({})
+    setShowValidationSummary(false)
   }
 
   async function submit(event: FormEvent) {
@@ -453,20 +579,21 @@ function EasyCodeWizard({ handoff }: { handoff: EasyCodeHandoff }) {
     setResult(null)
     setHandoffState('idle')
     setCopied(false)
-    if (!projectName.trim()) return setError('请填写项目名称。')
-    if (!topic.trim()) return setError('请描述你要创建的应用。')
-    if (mode === 'professional' && effective.stack === 'custom' && !stackDetail.trim()) return setError('请填写自定义技术栈。')
-    if (mode === 'professional' && effective.environment === 'custom' && !environmentDetail.trim()) return setError('请填写自定义开发环境。')
+    const fields: EasyCodeField[] = ['projectName', 'topic']
+    if (mode === 'professional' && effective.stack === 'custom') fields.push('stackDetail')
+    if (mode === 'professional' && effective.environment === 'custom') fields.push('environmentDetail')
+    if (mode === 'professional' && effective.mcp) fields.push('mcpJson')
+    setTouched(Object.fromEntries(fields.map(field => [field, true])) as Partial<Record<EasyCodeField, boolean>>)
+    if (fields.some(field => validationErrors[field] !== undefined)) {
+      setShowValidationSummary(true)
+      queueMicrotask(() => errorSummaryRef.current?.focus())
+      return
+    }
+    setShowValidationSummary(false)
 
     let mcpServers: EasyCodeRequest['mcpServers'] = {}
     if (effective.mcp) {
-      try {
-        const parsed = JSON.parse(mcpJson) as unknown
-        if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) throw new Error()
-        mcpServers = parsed as EasyCodeRequest['mcpServers']
-      } catch {
-        return setError('手动 MCP 配置必须是有效的 JSON 对象。')
-      }
+      mcpServers = JSON.parse(mcpJson) as EasyCodeRequest['mcpServers']
     }
 
     const payload: EasyCodeRequest = {
@@ -521,87 +648,156 @@ function EasyCodeWizard({ handoff }: { handoff: EasyCodeHandoff }) {
     }
   }
 
+  const submitLabel = submitting
+    ? handoffState === 'sending' ? '正在交给 DeepSeek…' : '正在准备项目…'
+    : effective.workflow === 'plan' ? '让 DeepSeek 制定计划' : '让 DeepSeek 创建应用'
+
   return <div className="ec-root">
     <header className="ec-hero">
       <div>
         <p className="ec-kicker">Click to build</p>
-        <h2 className="ec-title">从一个想法开始。</h2>
-        <p className="ec-intro">输入目标并选择控制粒度，EasyCode 会准备本地工作区，再让 DeepSeek 决策技术方案并生成应用。无需记命令，也不会替你上传代码。</p>
+        <h2 className="ec-title">把想法变成可运行的应用。</h2>
+        <p className="ec-intro">描述目标，选择需要的控制粒度。EasyCode 会准备安全的本地工作区，再由 DeepSeek 决策技术路线、生成代码并继续开发。</p>
       </div>
       <span className="ec-version">v0.1</span>
     </header>
 
+    <ol className="ec-progress" aria-label="创建流程">
+      <li>描述产品想法</li>
+      <li>确认工程约束</li>
+      <li>交给 DeepSeek</li>
+    </ol>
+
     <div className="ec-mode-grid" role="group" aria-label="创建模式">
       <button className="ec-mode" type="button" aria-label="简易模式" aria-pressed={mode === 'simple'} data-active={mode === 'simple'} onClick={() => chooseMode('simple')}>
+        <span className="ec-mode-top"><span className="ec-mode-icon"><Icon name="sparkles" size={20} /></span><span className="ec-mode-badge">最快开始</span></span>
         <strong>简易模式</strong>
-        <span>只输入项目名与主题，其余技术选择交给 DeepSeek。</span>
+        <span className="ec-mode-copy">只描述要做什么，技术路线与执行细节交给 DeepSeek。</span>
+        <span className="ec-mode-features"><span>零配置</span><span>自动决策</span><span>直接创建</span></span>
       </button>
       <button className="ec-mode" type="button" aria-label="专业模式" aria-pressed={mode === 'professional'} data-active={mode === 'professional'} onClick={() => chooseMode('professional')}>
+        <span className="ec-mode-top"><span className="ec-mode-icon"><Icon name="sliders" size={20} /></span><span className="ec-mode-badge">完整控制</span></span>
         <strong>专业模式</strong>
-        <span>控制技术栈、环境、Git、工作流、设计目标与 MCP。</span>
+        <span className="ec-mode-copy">指定技术栈、环境、Git、工作流、设计目标与 MCP。</span>
+        <span className="ec-mode-features"><span>工程约束</span><span>Plan / Go</span><span>手动 MCP</span></span>
       </button>
     </div>
 
-    <form className="ec-layout" onSubmit={submit}>
+    <form className="ec-layout" noValidate onSubmit={submit}>
       <div className="ec-form">
-        <section className="ec-section">
-          <div className="ec-section-head"><h3>项目基础</h3><span>必填</span></div>
+        {showValidationSummary && Object.keys(validationErrors).length > 0 && <div ref={errorSummaryRef} className="ec-error-summary" role="alert" tabIndex={-1}>
+          <strong>还差一点信息</strong>
+          <p>请检查下方标记的字段，修正后即可继续创建。</p>
+        </div>}
+
+        <section className="ec-section" aria-labelledby="ec-section-project">
+          <div className="ec-section-head">
+            <div className="ec-section-title"><span className="ec-section-icon"><Icon name="folder" /></span><div><h3 id="ec-section-project">项目基础</h3><p>告诉 DeepSeek 要创建什么</p></div></div>
+            <span className="ec-section-meta">必填</span>
+          </div>
           <div className="ec-grid-2">
-            <label className="ec-field">
-              <span className="ec-label">项目名称</span>
-              <input className="ec-input" aria-label="项目名称" value={projectName} maxLength={64} onChange={event => setProjectName(event.target.value)} placeholder="my-app" autoComplete="off" />
-              <span className="ec-help">将作为本地目录名。</span>
-            </label>
-            <label className="ec-field">
-              <span className="ec-label">一句话主题</span>
-              <input className="ec-input" aria-label="一句话主题" value={topic} maxLength={2000} onChange={event => {
+            <div className="ec-field">
+              <label className="ec-label" htmlFor="ec-project-name">项目名称 <span className="ec-required" aria-hidden="true">*</span></label>
+              <input id="ec-project-name" className="ec-input" aria-label="项目名称" aria-invalid={visibleError('projectName') !== undefined} aria-describedby="ec-project-help ec-project-error" value={projectName} maxLength={64} onBlur={() => touch('projectName')} onChange={event => setProjectName(event.target.value)} placeholder="my-app" autoComplete="off" required />
+              <p className="ec-help" id="ec-project-help">将作为本地目录名，不会覆盖同名目录。</p>
+              <p className="ec-field-error" id="ec-project-error" aria-live="polite">{visibleError('projectName') ?? ''}</p>
+            </div>
+            <div className="ec-field">
+              <label className="ec-label" htmlFor="ec-topic">一句话主题 <span className="ec-required" aria-hidden="true">*</span></label>
+              <input id="ec-topic" className="ec-input" aria-label="一句话主题" aria-invalid={visibleError('topic') !== undefined} aria-describedby="ec-topic-help ec-topic-error" value={topic} maxLength={2000} onBlur={() => touch('topic')} onChange={event => {
                 const next = event.target.value
                 setTopic(next)
                 if (projectName === 'my-app' && next.trim()) setProjectName(slugFromTopic(next))
-              }} placeholder="例如：给独立开发者使用的待办应用" autoComplete="off" />
-              <span className="ec-help">越具体，生成的上下文越清楚。</span>
-            </label>
+              }} placeholder="例如：给独立开发者使用的待办应用" autoComplete="off" required />
+              <p className="ec-help" id="ec-topic-help">写清用户、场景和目标，生成结果会更准确。</p>
+              <p className="ec-field-error" id="ec-topic-error" aria-live="polite">{visibleError('topic') ?? ''}</p>
+            </div>
           </div>
+          {mode === 'simple' && <div className="ec-auto-plan" aria-label="简易模式自动完成的工作">
+            <div><strong>技术方案</strong><span>根据产品目标自动选择</span></div>
+            <div><strong>开发环境</strong><span>采用最合适的本地方案</span></div>
+            <div><strong>执行方式</strong><span>进入 Go 模式生成并验证</span></div>
+          </div>}
         </section>
 
         {mode === 'professional' && <>
-          <section className="ec-section">
-            <div className="ec-section-head"><h3>开发栈</h3><span>自动或指定约束</span></div>
-            <label className="ec-field"><span className="ec-label">技术栈</span><select className="ec-select" aria-label="技术栈" value={stack} onChange={event => setStack(event.target.value as AppStack)}>
-              {STACK_GROUPS.map(group => <optgroup key={group.label} label={group.label}>{group.items.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</optgroup>)}
-            </select><span className="ec-help">自动模式会根据产品形态、维护成本、部署条件和用户目标选择，而不是随机套模板。</span></label>
-            {stack === 'custom' && <label className="ec-field"><span className="ec-label">自定义技术栈</span><input className="ec-input" aria-label="自定义技术栈" value={stackDetail} maxLength={300} onChange={event => setStackDetail(event.target.value)} placeholder="例如：Elixir + Phoenix LiveView" /></label>}
-            <p className="ec-decision-note">这些选项是给 DeepSeek 的工程约束。Go 模式会继续生成和验证应用；Plan 模式只完善方案。</p>
-          </section>
-
-          <section className="ec-section">
-            <div className="ec-section-head"><h3>执行策略</h3><span>环境与工作流</span></div>
-            <div className="ec-grid-2">
-              <label className="ec-field"><span className="ec-label">开发环境</span><select className="ec-select" aria-label="开发环境" value={environment} onChange={event => setEnvironment(event.target.value as DevEnvironment)}>{ENVIRONMENT_GROUPS.map(group => <optgroup key={group.label} label={group.label}>{group.items.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</optgroup>)}</select></label>
-              <label className="ec-field"><span className="ec-label">工作流</span><select className="ec-select" value={workflow} onChange={event => setWorkflow(event.target.value as WorkflowMode)}><option value="go">Go：生成并验证应用</option><option value="plan">Plan：只完善规划</option></select></label>
+          <section className="ec-section" aria-labelledby="ec-section-stack">
+            <div className="ec-section-head">
+              <div className="ec-section-title"><span className="ec-section-icon"><Icon name="layers" /></span><div><h3 id="ec-section-stack">开发栈</h3><p>让 DeepSeek 决策，或指定工程边界</p></div></div>
+              <span className="ec-section-meta">技术约束</span>
             </div>
-            {environment === 'custom' && <label className="ec-field"><span className="ec-label">自定义开发环境</span><input className="ec-input" aria-label="自定义开发环境" value={environmentDetail} maxLength={300} onChange={event => setEnvironmentDetail(event.target.value)} placeholder="例如：内网 Linux 构建机 + 自托管 Runner" /></label>}
-            <div className="ec-switch-row"><div className="ec-switch-copy"><strong>初始化 Git 仓库</strong><span>创建 main 分支，不自动提交或推送。</span></div><Toggle checked={initializeGit} onChange={setInitializeGit} label="初始化 Git 仓库" /></div>
+            <div className="ec-field">
+              <label className="ec-label" htmlFor="ec-stack">技术栈</label>
+              <select id="ec-stack" className="ec-select" aria-label="技术栈" value={stack} onChange={event => { setStack(event.target.value as AppStack); setShowValidationSummary(false) }}>
+                {STACK_GROUPS.map(group => <optgroup key={group.label} label={group.label}>{group.items.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</optgroup>)}
+              </select>
+              <p className="ec-help">自动决策会综合产品形态、维护成本、部署条件和你的目标。</p>
+            </div>
+            {stack === 'custom' && <div className="ec-field">
+              <label className="ec-label" htmlFor="ec-stack-detail">自定义技术栈 <span className="ec-required" aria-hidden="true">*</span></label>
+              <input id="ec-stack-detail" className="ec-input" aria-label="自定义技术栈" aria-invalid={visibleError('stackDetail') !== undefined} aria-describedby="ec-stack-detail-error" value={stackDetail} maxLength={300} onBlur={() => touch('stackDetail')} onChange={event => setStackDetail(event.target.value)} placeholder="例如：Elixir + Phoenix LiveView" required />
+              <p className="ec-field-error" id="ec-stack-detail-error" aria-live="polite">{visibleError('stackDetail') ?? ''}</p>
+            </div>}
+            <p className="ec-decision-note"><Icon name="info" size={16} /><span>这些选项会成为 DeepSeek 的工程约束。Go 模式继续生成与验证，Plan 模式只产出可执行方案。</span></p>
           </section>
 
-          <section className="ec-section">
-            <div className="ec-section-head"><h3>设计目标</h3><span>最多 2000 字</span></div>
-            <label className="ec-field"><span className="ec-label">你希望产品给人什么感受？</span><textarea className="ec-textarea" value={designGoal} maxLength={2000} onChange={event => setDesignGoal(event.target.value)} placeholder="例如：工具感强、信息密度适中、移动端优先" /></label>
+          <section className="ec-section" aria-labelledby="ec-section-execution">
+            <div className="ec-section-head">
+              <div className="ec-section-title"><span className="ec-section-icon"><Icon name="terminal" /></span><div><h3 id="ec-section-execution">执行策略</h3><p>选择开发位置与交付深度</p></div></div>
+              <span className="ec-section-meta">环境与工作流</span>
+            </div>
+            <div className="ec-grid-2">
+              <div className="ec-field">
+                <label className="ec-label" htmlFor="ec-environment">开发环境</label>
+                <select id="ec-environment" className="ec-select" aria-label="开发环境" value={environment} onChange={event => { setEnvironment(event.target.value as DevEnvironment); setShowValidationSummary(false) }}>{ENVIRONMENT_GROUPS.map(group => <optgroup key={group.label} label={group.label}>{group.items.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</optgroup>)}</select>
+                <p className="ec-help">本机、容器、远程与云端环境均可作为约束。</p>
+              </div>
+              <div className="ec-field">
+                <label className="ec-label" htmlFor="ec-workflow">工作流</label>
+                <select id="ec-workflow" className="ec-select" aria-label="工作流" value={workflow} onChange={event => setWorkflow(event.target.value as WorkflowMode)}><option value="go">Go：生成并验证应用</option><option value="plan">Plan：只完善规划</option></select>
+                <p className="ec-help">Plan 不写应用代码；Go 会继续落地实现。</p>
+              </div>
+            </div>
+            {environment === 'custom' && <div className="ec-field">
+              <label className="ec-label" htmlFor="ec-environment-detail">自定义开发环境 <span className="ec-required" aria-hidden="true">*</span></label>
+              <input id="ec-environment-detail" className="ec-input" aria-label="自定义开发环境" aria-invalid={visibleError('environmentDetail') !== undefined} aria-describedby="ec-environment-detail-error" value={environmentDetail} maxLength={300} onBlur={() => touch('environmentDetail')} onChange={event => setEnvironmentDetail(event.target.value)} placeholder="例如：内网 Linux 构建机 + 自托管 Runner" required />
+              <p className="ec-field-error" id="ec-environment-detail-error" aria-live="polite">{visibleError('environmentDetail') ?? ''}</p>
+            </div>}
+            <div className="ec-switch-row"><div className="ec-switch-copy"><strong>初始化 Git 仓库</strong><span>创建 main 分支，不自动提交，也不会推送远端。</span></div><Toggle checked={initializeGit} onChange={setInitializeGit} label="初始化 Git 仓库" /></div>
           </section>
 
-          <section className="ec-section">
-            <div className="ec-section-head"><h3>MCP</h3><span>可选能力</span></div>
-            <div className="ec-switch-row"><div className="ec-switch-copy"><strong>启用手动 MCP 配置</strong><span>把你确认过的服务器配置写入项目 .mcp.json。</span></div><Toggle checked={mcpEnabled} onChange={setMcpEnabled} label="启用 MCP" /></div>
-            <div className="ec-switch-row"><div className="ec-switch-copy"><strong>自动搜寻合适的 MCP <span className="ec-wip">WIP</span></strong><span>首版不联网、不安装、不修改你的 MCP 列表。</span></div><Toggle checked={false} onChange={() => undefined} label="自动搜寻 MCP，开发中" disabled /></div>
-            {mcpEnabled && <label className="ec-field"><span className="ec-label">MCP servers JSON</span><textarea className="ec-textarea ec-code" aria-label="MCP servers JSON" value={mcpJson} onChange={event => setMcpJson(event.target.value)} spellCheck={false} aria-describedby="ec-mcp-help" /><span className="ec-help" id="ec-mcp-help">填写 mcpServers 对象的内容，例如 {`{ "my-server": { "command": "...", "args": [] } }`}。</span></label>}
+          <section className="ec-section" aria-labelledby="ec-section-design">
+            <div className="ec-section-head">
+              <div className="ec-section-title"><span className="ec-section-icon"><Icon name="palette" /></span><div><h3 id="ec-section-design">设计目标</h3><p>定义产品应有的视觉与体验感受</p></div></div>
+              <span className="ec-section-meta">最多 2000 字</span>
+            </div>
+            <div className="ec-field">
+              <label className="ec-label" htmlFor="ec-design-goal">你希望产品给人什么感受？</label>
+              <textarea id="ec-design-goal" className="ec-textarea" value={designGoal} maxLength={2000} onChange={event => setDesignGoal(event.target.value)} placeholder="例如：工具感强、信息密度适中、移动端优先" />
+              <p className="ec-help">可以描述风格、目标用户、关键页面、响应式与无障碍要求。</p>
+            </div>
+          </section>
+
+          <section className="ec-section" aria-labelledby="ec-section-mcp">
+            <div className="ec-section-head">
+              <div className="ec-section-title"><span className="ec-section-icon"><Icon name="plug" /></span><div><h3 id="ec-section-mcp">MCP</h3><p>按需连接你已经确认的工具</p></div></div>
+              <span className="ec-section-meta">可选能力</span>
+            </div>
+            <div className="ec-switch-row"><div className="ec-switch-copy"><strong>启用手动 MCP 配置</strong><span>把你确认过的服务器配置写入项目 .mcp.json。</span></div><Toggle checked={mcpEnabled} onChange={value => { setMcpEnabled(value); setShowValidationSummary(false) }} label="启用 MCP" /></div>
+            <div className="ec-switch-row"><div className="ec-switch-copy"><strong>自动搜寻合适的 MCP <span className="ec-wip">WIP</span></strong><span>首版不联网、不安装，也不会修改你的 MCP 列表。</span></div><Toggle checked={false} onChange={() => undefined} label="自动搜寻 MCP，开发中" disabled /></div>
+            {mcpEnabled && <div className="ec-field">
+              <label className="ec-label" htmlFor="ec-mcp-json">MCP servers JSON</label>
+              <textarea id="ec-mcp-json" className="ec-textarea ec-code" aria-label="MCP servers JSON" aria-invalid={visibleError('mcpJson') !== undefined} value={mcpJson} onBlur={() => touch('mcpJson')} onChange={event => setMcpJson(event.target.value)} spellCheck={false} aria-describedby="ec-mcp-help ec-mcp-error" />
+              <p className="ec-help" id="ec-mcp-help">填写 mcpServers 对象，例如 {`{ "my-server": { "command": "...", "args": [] } }`}。</p>
+              <p className="ec-field-error" id="ec-mcp-error" aria-live="polite">{visibleError('mcpJson') ?? ''}</p>
+            </div>}
           </section>
         </>}
       </div>
 
-      <aside className="ec-summary">
-        <h3>本次创建</h3>
+      <aside className="ec-summary" aria-label="本次创建摘要">
+        <div className="ec-summary-head"><div><h3>本次创建</h3><p className="ec-summary-subtitle">提交前可随时调整</p></div><span className="ec-summary-mode">{mode === 'simple' ? '简易' : '专业'}</span></div>
         <dl>
-          <div><dt>模式</dt><dd>{mode === 'simple' ? '简易' : '专业'}</dd></div>
           <div><dt>项目</dt><dd>{projectName || '未命名'}</dd></div>
           <div><dt>技术栈</dt><dd>{effective.stack === 'custom' ? stackDetail || '待填写' : stackName(effective.stack)}</dd></div>
           <div><dt>环境</dt><dd>{effective.environment === 'custom' ? environmentDetail || '待填写' : environmentName(effective.environment)}</dd></div>
@@ -610,10 +806,10 @@ function EasyCodeWizard({ handoff }: { handoff: EasyCodeHandoff }) {
           <div><dt>MCP</dt><dd>{effective.mcp ? '手动配置' : '关闭'}</dd></div>
         </dl>
         <div className="ec-action">
-          <button className="ec-button" type="submit" disabled={submitting}>{submitting ? handoffState === 'sending' ? '正在交给 DeepSeek…' : '正在准备项目…' : effective.workflow === 'plan' ? '让 DeepSeek 制定计划' : '让 DeepSeek 创建应用'}</button>
-          <p className="ec-footnote">项目只会写入 EasyCode 输出目录，随后在 Harness 中打开并发送开发任务。同名目录不会被覆盖。</p>
+          <button className="ec-button" type="submit" disabled={submitting}>{submitting && <span className="ec-spinner" aria-hidden="true" />}{submitLabel}{!submitting && <Icon name="arrow" size={16} />}</button>
+          <p className="ec-footnote">只写入 EasyCode 输出目录，随后在 Harness 中打开开发任务；同名目录不会被覆盖。</p>
           {error && <p className="ec-error" role="alert">{error}</p>}
-          {result && <div className="ec-result" aria-live="polite"><strong>{handoffState === 'sent' ? '已交给 DeepSeek' : handoffState === 'failed' ? '项目已准备，等待手动继续' : '项目工作区已准备'}</strong><p className="ec-path">{result.outputPath}</p><button className="ec-copy" type="button" onClick={copyPath}>{copied ? '已复制' : '复制路径'}</button></div>}
+          {result && <div className="ec-result" aria-live="polite"><strong><Icon name="check" size={15} />{handoffState === 'sent' ? '已交给 DeepSeek' : handoffState === 'failed' ? '项目已准备，等待手动继续' : '项目工作区已准备'}</strong><p className="ec-path">{result.outputPath}</p><button className="ec-copy" type="button" onClick={copyPath}><Icon name="copy" size={14} />{copied ? '已复制' : '复制路径'}</button></div>}
         </div>
       </aside>
     </form>

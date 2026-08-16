@@ -69,7 +69,19 @@ describe('EasyCodeWizard', () => {
     expect(css).toContain('--dsw-alias-bg-layer-1')
     expect(css).toContain('--dsw-alias-label-primary')
     expect(css).toContain('body[data-ds-dark-theme] .ec-root')
+    expect(css).toContain('--ec-text: #f8fafc')
+    expect(css).toContain('--ec-panel: #172033')
+    expect(css).toContain('@media (prefers-reduced-motion: reduce)')
     expect(css).not.toMatch(/--dsw-(surface|surface-raised|text|text-muted|border)\b/)
+  })
+
+  it('keeps version badges and both mode feature cards visible', () => {
+    renderWizard()
+    expect(screen.getByText('v0.1')).not.toBeNull()
+    expect(screen.getByText('最快开始')).not.toBeNull()
+    expect(screen.getByText('完整控制')).not.toBeNull()
+    expect(screen.getByRole('button', { name: '简易模式' }).getAttribute('aria-pressed')).toBe('true')
+    expect(screen.getByRole('button', { name: '专业模式' }).getAttribute('aria-pressed')).toBe('false')
   })
 
   it('registers a homepage launcher that opens and closes the overlay', () => {
@@ -103,6 +115,18 @@ describe('EasyCodeWizard', () => {
     fireEvent.click(screen.getByRole('button', { name: '专业模式' }))
     expect((screen.getByRole('switch', { name: '自动搜寻 MCP，开发中' }) as HTMLButtonElement).disabled).toBe(true)
     expect(screen.getByText('WIP')).not.toBeNull()
+  })
+
+  it('validates required fields on blur and focuses the error summary after submit', async () => {
+    renderWizard()
+    const name = screen.getByLabelText('项目名称')
+    fireEvent.change(name, { target: { value: '' } })
+    fireEvent.blur(name)
+    expect(screen.getByText('请填写项目名称。')).not.toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: '让 DeepSeek 创建应用' }))
+    const summary = await screen.findByText('还差一点信息')
+    expect(summary.parentElement).toBe(document.activeElement)
   })
 
   it('submits simple mode with automatic decisions and hands the task to DeepSeek', async () => {
