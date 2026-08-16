@@ -26,7 +26,7 @@ EasyCode 是一个面向 [DeepSeek Harness](https://github.com/deepseek-ai/deeps
 
 ## 安装
 
-需要 Node.js 22 或更高版本，以及可运行的 `dsh` CLI。
+需要 Node.js 22 或更高版本。以下命令使用 `npx` 临时运行 DSH CLI，无需预先全局安装 `dsh`。
 
 ### 从本地检出安装
 
@@ -34,28 +34,34 @@ EasyCode 是一个面向 [DeepSeek Harness](https://github.com/deepseek-ai/deeps
 npm install
 npm run check
 npm pack
-dsh plugin --profile web add ./dsh-easycode-0.1.0.tgz
-dsh web
+npx --yes @deepseek-ai/dsh plugin --profile web add ./dsh-easycode-0.1.0.tgz
+npx --yes @deepseek-ai/dsh web
 ```
 
 打开 Harness Web UI 后，在设置中选择 `EasyCode`。
 
 ### 从 GitHub 安装
 
-Git 安装会运行本仓库的 `prepare` 构建脚本。pnpm 10+ 默认要求用户明确允许安装期构建；请只对你审查并信任的提交授权，并锁定 commit：
+Git 安装会运行本仓库的 `prepare` 构建脚本。pnpm 10+ 默认要求用户明确允许安装期构建；请只对你审查并信任的提交授权。下面的提交已经完成 v0.1 验证：
 
 ```bash
-dsh plugin --profile web add github:TreasureGooldove/dsh-easycode#COMMIT_SHA
+npx --yes @deepseek-ai/dsh plugin --profile web add github:TreasureGooldove/dsh-easycode#95a0bb5239240009004a0c70a21a4141348d6aef
 ```
 
-如果 dsh 提示构建未获授权，请把它打印的精确包键加入该 profile 的 `pnpm-workspace.yaml`：
+首次执行时，pnpm 会拒绝未授权的 Git 构建，同时初始化 `web` profile。打开 `%USERPROFILE%\.dsh\profiles\web\pnpm-workspace.yaml`，把错误信息打印的精确包键加入 `allowBuilds`：
 
 ```yaml
 allowBuilds:
-  dsh-easycode: true
+  dsh-easycode@https://codeload.github.com/TreasureGooldove/dsh-easycode/tar.gz/95a0bb5239240009004a0c70a21a4141348d6aef: true
 ```
 
-随后重新执行安装命令。
+随后重新执行上面的安装命令，再运行：
+
+```bash
+npx --yes @deepseek-ai/dsh web
+```
+
+如果希望使用较短的 `dsh` 命令，也可以先运行 `npm install --global @deepseek-ai/dsh`。
 
 ## 输出位置
 
