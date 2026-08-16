@@ -67,7 +67,7 @@ React + Vite、Vue + Vite、Next.js、Node.js API 和 Vanilla + Vite 带有内�
 dsh plugin --profile web add github:TreasureGooldove/dsh-easycode
 ```
 
-GitHub 安装会从源码运行 EasyCode 的 `prepare` 构建脚本。pnpm 10 及更高版本可能在首次安装时拒绝执行构建，并打印需要加入 `allowBuilds` 的精确包键。把该键加入对应 `web` profile 的 `pnpm-workspace.yaml` 后，重新执行上面的 DSH 安装命令。
+仓库已包含预构建的 Host 与 Web 运行文件，安装期间不会执行 `prepare` 等生命周期构建脚本，因此无需修改 pnpm 的 `allowBuilds` 白名单。
 
 安装完成后先验证配置层：
 
