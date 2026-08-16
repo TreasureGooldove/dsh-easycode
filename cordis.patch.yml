@@ -1,0 +1,5 @@
+- insert:
+    - id: easycode
+      name: dsh-easycode
+      config:
+        outputRoot: !!js dshHomePath('easycode-projects')
