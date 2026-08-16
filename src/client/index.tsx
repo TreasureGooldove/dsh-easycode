@@ -175,7 +175,7 @@ body[data-ds-dark-theme] .ec-root {
 .ec-mode[data-active='true'] .ec-mode-icon { border-color: color-mix(in srgb, var(--ec-accent) 45%, var(--ec-border)); background: var(--ec-accent); color: var(--ec-accent-contrast); }
 .ec-mode-badge { display: inline-flex; align-items: center; min-height: 24px; border: 1px solid var(--ec-border); border-radius: 999px; padding: 3px 8px; color: var(--ec-muted); font-size: 10px; font-weight: 680; }
 .ec-mode strong { display: block; margin-top: 14px; font-size: 17px; letter-spacing: -.015em; }
-.ec-mode > span { display: block; margin-top: 7px; color: var(--ec-muted); font-size: 13px; line-height: 1.55; }
+.ec-mode-copy { display: block; margin-top: 7px; color: var(--ec-muted); font-size: 13px; line-height: 1.55; }
 .ec-mode-features { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 13px; }
 .ec-mode-features span { display: inline-flex; align-items: center; gap: 5px; color: var(--ec-faint); font-size: 10px; }
 .ec-mode-features span::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--ec-accent); }
@@ -670,13 +670,13 @@ function EasyCodeWizard({ handoff }: { handoff: EasyCodeHandoff }) {
       <button className="ec-mode" type="button" aria-label="简易模式" aria-pressed={mode === 'simple'} data-active={mode === 'simple'} onClick={() => chooseMode('simple')}>
         <span className="ec-mode-top"><span className="ec-mode-icon"><Icon name="sparkles" size={20} /></span><span className="ec-mode-badge">最快开始</span></span>
         <strong>简易模式</strong>
-        <span>只描述要做什么，技术路线与执行细节交给 DeepSeek。</span>
+        <span className="ec-mode-copy">只描述要做什么，技术路线与执行细节交给 DeepSeek。</span>
         <span className="ec-mode-features"><span>零配置</span><span>自动决策</span><span>直接创建</span></span>
       </button>
       <button className="ec-mode" type="button" aria-label="专业模式" aria-pressed={mode === 'professional'} data-active={mode === 'professional'} onClick={() => chooseMode('professional')}>
         <span className="ec-mode-top"><span className="ec-mode-icon"><Icon name="sliders" size={20} /></span><span className="ec-mode-badge">完整控制</span></span>
         <strong>专业模式</strong>
-        <span>指定技术栈、环境、Git、工作流、设计目标与 MCP。</span>
+        <span className="ec-mode-copy">指定技术栈、环境、Git、工作流、设计目标与 MCP。</span>
         <span className="ec-mode-features"><span>工程约束</span><span>Plan / Go</span><span>手动 MCP</span></span>
       </button>
     </div>
