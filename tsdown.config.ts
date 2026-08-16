@@ -25,6 +25,7 @@ export default defineConfig([
     dts: false,
     sourcemap: true,
     clean: false,
+    loader: { '.svg': 'text' },
     external: ['react', 'react/jsx-runtime'],
     outputOptions: {
       entryFileNames: 'client.js',

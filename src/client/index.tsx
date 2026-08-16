@@ -13,6 +13,7 @@ import type {
   EasyCodeResult,
   WorkflowMode,
 } from '../types.ts'
+import WHALE_SVG from './hero-whale.svg'
 
 const PLUGIN_ID = 'dsh-easycode'
 const NS = 'easycode'
@@ -78,6 +79,7 @@ const ENVIRONMENTS = ENVIRONMENT_GROUPS.flatMap(group => group.items)
 const STYLES = `
 .ec-root {
   --ec-canvas: #f6f8f7;
+  --ec-overlay-body: rgba(246, 248, 247, .94);
   --ec-panel: #ffffff;
   --ec-panel-raised: #ffffff;
   --ec-panel-soft: #eef7f3;
@@ -109,6 +111,7 @@ const STYLES = `
 
 body[data-ds-dark-theme] .ec-root {
   --ec-canvas: #202321;
+  --ec-overlay-body: rgba(32, 35, 33, .72);
   --ec-panel: #242725;
   --ec-panel-raised: #282b29;
   --ec-panel-soft: #243029;
@@ -287,9 +290,11 @@ body[data-ds-dark-theme] .ec-launcher-mark { color: #4ade80; border-color: rgba(
 .ec-launcher-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .ec-overlay { position: absolute; z-index: 100; inset: 0; display: grid; place-items: center; padding: 18px; background: var(--dsw-alias-bg-mask-1, rgba(7, 12, 20, .68)); backdrop-filter: blur(8px); }
-.ec-overlay-panel { display: flex; flex-direction: column; width: min(1160px, 100%); max-height: 100%; border: 1px solid var(--dsw-alias-border-l2, #d9dcd8); border-radius: 20px; background: var(--dsw-alias-bg-layer-1, #ffffff); color: var(--dsw-alias-label-primary, #202725); box-shadow: 0 28px 90px rgba(0, 0, 0, .38); overflow: hidden; animation: ec-modal-in 180ms cubic-bezier(.2, .8, .2, 1); }
+.ec-overlay-panel { position: relative; isolation: isolate; display: flex; flex-direction: column; width: min(1160px, 100%); max-height: 100%; border: 1px solid var(--dsw-alias-border-l2, #d9dcd8); border-radius: 20px; background: var(--dsw-alias-bg-layer-1, #ffffff); color: var(--dsw-alias-label-primary, #202725); box-shadow: 0 28px 90px rgba(0, 0, 0, .38); overflow: hidden; animation: ec-modal-in 180ms cubic-bezier(.2, .8, .2, 1); }
 @keyframes ec-modal-in { from { opacity: 0; transform: translateY(8px) scale(.992); } to { opacity: 1; transform: none; } }
-.ec-overlay-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 64px; padding: 10px 18px; border-bottom: 1px solid var(--dsw-alias-border-l2, #d9dcd8); }
+.ec-whale-backdrop { position: absolute; z-index: 0; inset: 64px 0 0; overflow: hidden; pointer-events: none; opacity: 1; mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, .88) 38%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, .88) 38%, transparent 100%); }
+.ec-whale-backdrop canvas { display: block; width: 100%; height: 100%; }
+.ec-overlay-head { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 64px; padding: 10px 18px; border-bottom: 1px solid var(--dsw-alias-border-l2, #d9dcd8); background: color-mix(in srgb, var(--dsw-alias-bg-layer-1, #ffffff) 88%, transparent); }
 .ec-overlay-brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
 .ec-overlay-logo { display: grid; place-items: center; flex: 0 0 auto; width: 32px; height: 32px; border: 1px solid rgba(23, 122, 98, .4); border-radius: 9px; background: rgba(23, 122, 98, .12); color: #177a62; }
 body[data-ds-dark-theme] .ec-overlay-logo { color: #4ade80; border-color: rgba(74, 222, 128, .42); background: rgba(74, 222, 128, .12); }
@@ -300,7 +305,7 @@ body[data-ds-dark-theme] .ec-overlay-logo { color: #4ade80; border-color: rgba(7
 .ec-overlay-close:hover { background: var(--dsw-alias-interactive-bg-hover, rgba(0, 0, 0, .06)); }
 .ec-overlay-close:active { transform: scale(.95); }
 .ec-overlay-close:focus-visible { outline: 3px solid rgba(23, 122, 98, .32); outline-offset: 2px; }
-.ec-overlay-body { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 24px 28px 0; background: var(--ec-canvas, transparent); scroll-padding-block: 88px 24px; }
+.ec-overlay-body { position: relative; z-index: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 24px 28px 0; background: var(--ec-overlay-body); scroll-padding-block: 88px 24px; }
 .ec-overlay-body > .ec-root { width: min(1000px, 100%); margin-inline: auto; }
 
 @container (max-width: 820px) {
@@ -316,6 +321,7 @@ body[data-ds-dark-theme] .ec-overlay-logo { color: #4ade80; border-color: rgba(7
   .ec-overlay-panel { width: 100%; height: 100%; max-height: 100%; border: 0; border-radius: 0; animation: none; }
   .ec-overlay-head { padding-inline: 14px; }
   .ec-overlay-body { padding: 18px 14px 0; }
+  .ec-whale-backdrop { display: none; }
   .ec-overlay-brand-copy > span { display: none; }
   .ec-root { padding-bottom: max(32px, env(safe-area-inset-bottom)); }
   .ec-hero { grid-template-columns: 1fr; gap: 16px; padding-top: 4px; }
@@ -367,6 +373,232 @@ function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
     close: <><path d="m6 6 12 12" /><path d="M18 6 6 18" /></>,
   }
   return <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>
+}
+
+interface WhaleParticle {
+  x: number
+  y: number
+  z: number
+  scatteredX: number
+  scatteredY: number
+  scatteredZ: number
+  opacity: number
+  edge: number
+  index: number
+}
+
+function WhaleBackdrop() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (canvas === null) return
+    let context: CanvasRenderingContext2D | null
+    try {
+      context = canvas.getContext('2d')
+    } catch {
+      return
+    }
+    if (context === null) return
+
+    let width = 0
+    let height = 0
+    let pixelRatio = 1
+    let particles: WhaleParticle[] = []
+    let frame = 0
+    let lastTime = performance.now()
+    let elapsed = 0
+    let disposed = false
+    let mouseActive = false
+    let mouseHasMoved = false
+    let mouseStrength = 0
+    let mouseX = 0
+    let mouseY = 0
+    let targetMouseX = 0
+    let targetMouseY = 0
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect()
+      width = Math.max(1, rect.width)
+      height = Math.max(1, rect.height)
+      pixelRatio = Math.min(2, window.devicePixelRatio || 1)
+      canvas.width = Math.round(width * pixelRatio)
+      canvas.height = Math.round(height * pixelRatio)
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+    }
+
+    const pathData = WHALE_SVG.match(/<path[^>]*d="([^"]+)"/s)?.[1]
+
+    const createParticles = () => {
+      const sampleSize = 60
+      if (pathData === undefined || typeof Path2D === 'undefined') return
+      const sample = document.createElement('canvas')
+      sample.width = sampleSize
+      sample.height = sampleSize
+      const sampleContext = sample.getContext('2d')
+      if (sampleContext === null) return
+      sampleContext.fillStyle = '#000'
+      sampleContext.fillRect(0, 0, sampleSize, sampleSize)
+      const scale = Math.min(sampleSize / 24, sampleSize / 18)
+      sampleContext.save()
+      sampleContext.translate((sampleSize - 24 * scale) / 2, (sampleSize - 18 * scale) / 2)
+      sampleContext.scale(scale, scale)
+      sampleContext.fillStyle = '#fff'
+      sampleContext.fill(new Path2D(pathData))
+      sampleContext.restore()
+      const pixels = sampleContext.getImageData(0, 0, sampleSize, sampleSize).data
+      const luminance = new Float32Array(sampleSize * sampleSize)
+      for (let index = 0; index < luminance.length; index += 1) {
+        const offset = index * 4
+        const red = pixels[offset] ?? 0
+        const green = pixels[offset + 1] ?? 0
+        const blue = pixels[offset + 2] ?? 0
+        luminance[index] = (.299 * red + .587 * green + .114 * blue) / 255
+      }
+      const isIsolated = (x: number, y: number) => {
+        for (let offsetY = -2; offsetY <= 2; offsetY += 1) {
+          for (let offsetX = -2; offsetX <= 2; offsetX += 1) {
+            if (offsetX === 0 && offsetY === 0) continue
+            const neighborX = x + offsetX
+            const neighborY = y + offsetY
+            const neighborLuminance = luminance[neighborY * sampleSize + neighborX] ?? 0
+            if (neighborX >= 0 && neighborY >= 0 && neighborX < sampleSize && neighborY < sampleSize && neighborLuminance > .2) return false
+          }
+        }
+        return true
+      }
+      const next: WhaleParticle[] = []
+      for (let y = 0; y < sampleSize; y += 1) {
+        for (let x = 0; x < sampleSize; x += 1) {
+          const opacity = luminance[y * sampleSize + x] ?? 0
+          if (opacity <= .2 || isIsolated(x, y)) continue
+          const worldX = (x - sampleSize / 2) * .18
+          const worldY = (sampleSize / 2 - y) * .18
+          const angle = Math.random() * Math.PI * 2
+          const polar = Math.acos(2 * Math.random() - 1)
+          const radius = 3 * (.4 + .6 * Math.random())
+          next.push({
+            x: worldX,
+            y: worldY,
+            z: 0,
+            scatteredX: Math.sin(polar) * Math.cos(angle) * radius,
+            scatteredY: Math.sin(polar) * Math.sin(angle) * radius,
+            scatteredZ: Math.cos(polar) * radius * .5,
+            opacity,
+            edge: 1,
+            index: next.length,
+          })
+        }
+      }
+      particles = next
+    }
+
+    const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value))
+    const smoothstep = (edge0: number, edge1: number, value: number) => {
+      const t = clamp((value - edge0) / (edge1 - edge0), 0, 1)
+      return t * t * (3 - 2 * t)
+    }
+
+    const render = (time: number) => {
+      if (disposed) return
+      const delta = Math.min(.1, Math.max(.001, (time - lastTime) / 1000))
+      lastTime = time
+      elapsed += delta
+      const objectScale = Math.min(70, Math.max(24, width / 17))
+      const centerX = width * (width < 560 ? .67 : .64)
+      const centerY = height * .34
+      const mouseDecay = 1 - Math.pow(.05, delta)
+      mouseStrength += ((mouseActive ? .8 : 0) - mouseStrength) * mouseDecay
+      if (mouseHasMoved) {
+        mouseX += (targetMouseX - mouseX) * .2
+        mouseY += (targetMouseY - mouseY) * .2
+      }
+
+      context.clearRect(0, 0, width, height)
+      context.globalCompositeOperation = 'lighter'
+      for (const particle of particles) {
+        let worldX = particle.x
+        let worldY = particle.y
+        let worldZ = particle.z
+        const jitterX = Math.sin(particle.index * 12.9898) - .5
+        const jitterY = Math.sin(particle.index * 78.233) - .5
+        const jitterZ = Math.sin(particle.index * 39.425) - .5
+        worldX += jitterX * .05
+        worldY += jitterY * .05
+        worldZ += jitterZ * .05
+        worldX += Math.sin(elapsed * .5 + particle.index * .53) * .06
+        worldY += Math.cos(elapsed * .42 + particle.index * .71) * .06
+        worldZ += Math.sin(elapsed * .36 + particle.index * .91) * .08
+        const tail = smoothstep(.5, 4.5, particle.x)
+        worldY += Math.sin(elapsed * 1.1 - particle.x * .7) * .1 * tail
+        worldZ += Math.cos(elapsed * .9 - particle.x * .55) * .06 * tail
+
+        const toMouseX = worldX - mouseX
+        const toMouseY = worldY - mouseY
+        const mouseDistance = Math.hypot(toMouseX, toMouseY)
+        if (mouseDistance < 4.9 && mouseDistance > .001) {
+          const falloff = 1 - mouseDistance / 4.9
+          const force = falloff * falloff * falloff * mouseStrength
+          const angle = Math.sin(particle.index * .37 + elapsed * .5) * .8
+          const cos = Math.cos(angle)
+          const sin = Math.sin(angle)
+          const radialX = toMouseX / mouseDistance
+          const radialY = toMouseY / mouseDistance
+          worldX += (radialX * cos - radialY * sin) * force * 2
+          worldY += (radialX * sin + radialY * cos) * force * 2
+          worldZ += Math.sin(particle.index * 1.7 + elapsed) * force * .8
+        }
+
+        const lightX = 4.5 + (targetMouseX / Math.max(1, width)) * 1.05
+        const lightY = 5.5
+        const lightZ = 3
+        const lightDistance = Math.hypot(worldX - lightX, worldY - lightY, worldZ - lightZ)
+        const lit = clamp(1 - lightDistance / 14, 0, 1)
+        const light = .2 + (1.116 - .2) * lit * lit
+        const glow = smoothstep(8, 0, Math.hypot(worldX, worldY)) * .3
+        const shimmer = Math.sin(elapsed * 1.5 + worldX * 5 + worldY * 3) * .1 + .9
+        const alpha = particle.opacity * (.45 + glow) * shimmer * Math.min(light, 1) * .82
+        const colorBoost = Math.max(0, light - 1)
+        const red = clamp((.75 + glow * .2) * light * (1 + .07 * colorBoost), 0, 1)
+        const green = clamp((.8 + glow * .3) * light * (1 + .02 * colorBoost), 0, 1)
+        const blue = clamp((.9 + glow * .5) * light * (1 - .06 * colorBoost), 0, 1)
+        const screenX = centerX + worldX * objectScale
+        const screenY = centerY - worldY * objectScale
+        const size = Math.max(1, objectScale * .06)
+        context.fillStyle = `rgba(${Math.round(red * 255)}, ${Math.round(green * 255)}, ${Math.round(blue * 255)}, ${clamp(alpha, 0, .9)})`
+        context.fillRect(screenX - size / 2, screenY - size / 2, size, size)
+      }
+      context.globalCompositeOperation = 'source-over'
+      if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) frame = requestAnimationFrame(render)
+    }
+
+    const handleMouseMove = (event: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect()
+      targetMouseX = ((event.clientX - rect.left) / Math.max(1, rect.width) * 2 - 1) * width * .5 / objectScaleForMouse()
+      targetMouseY = -((event.clientY - rect.top) / Math.max(1, rect.height) * 2 - 1) * height * .5 / objectScaleForMouse()
+      mouseHasMoved = true
+      mouseActive = true
+    }
+    const objectScaleForMouse = () => Math.min(70, Math.max(24, width / 17))
+    const handleMouseLeave = () => { mouseActive = false }
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(resize)
+    observer?.observe(canvas)
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
+    window.addEventListener('mouseleave', handleMouseLeave)
+    resize()
+    createParticles()
+    render(performance.now())
+
+    return () => {
+      disposed = true
+      cancelAnimationFrame(frame)
+      observer?.disconnect()
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [])
+
+  return <div className="ec-whale-backdrop" aria-hidden="true"><canvas ref={canvasRef} /></div>
 }
 
 function EasyCodeLauncher({ wide, t }: LocaleSeat & { wide: boolean }) {
@@ -448,6 +680,7 @@ function EasyCodeOverlay({ t, handoff }: LocaleSeat & { handoff: EasyCodeHandoff
         <div className="ec-overlay-brand"><span className="ec-overlay-logo" aria-hidden="true"><Icon name="sparkles" size={17} /></span><div className="ec-overlay-brand-copy"><strong id="ec-overlay-title">{t('dialogLabel')}</strong><span id="ec-overlay-hint">{t('dialogHint')}</span></div></div>
         <button ref={closeRef} className="ec-overlay-close" type="button" aria-label={t('close')} title={t('close')} onClick={close}><Icon name="close" size={19} /></button>
       </header>
+      <WhaleBackdrop />
       <div className="ec-overlay-body"><EasyCodeWizard handoff={handoff} /></div>
     </section>
   </div>

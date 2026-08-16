@@ -87,6 +87,7 @@ describe('EasyCodeWizard', () => {
 
   it('registers a homepage launcher that opens and closes the overlay', () => {
     const { entries } = capturePlugin()
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(() => null)
     const launcher = entries.get('sidebar.footer.action:easycode')
     const overlay = entries.get('shell.overlay:easycode')
     if (launcher === undefined || overlay === undefined) throw new Error('EasyCode homepage entries were not registered')
@@ -98,6 +99,7 @@ describe('EasyCodeWizard', () => {
     const dialog = screen.getByRole('dialog', { name: '创建应用' })
     expect(dialog).not.toBeNull()
     expect(dialog.querySelector('.ec-overlay-logo svg')).not.toBeNull()
+    expect(dialog.querySelector('.ec-whale-backdrop canvas')).not.toBeNull()
     expect(screen.queryByRole('list', { name: '创建流程' })).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: '关闭' }))
     expect(screen.queryByRole('dialog', { name: '创建应用' })).toBeNull()
